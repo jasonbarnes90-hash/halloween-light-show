@@ -1,0 +1,1652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Halloween Light Show Command Center</title>
+<style>
+:root{--bg:#0b0d12;--panel:#151922;--card:#1b202b;--line:#303746;--text:#f7f7f8;--muted:#a9b0bd;--accent:#ff7a18;--green:#35d07f;--yellow:#f5c542;--red:#ff5d5d;--blue:#59a8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#222938 0,#0b0d12 42%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;color:inherit}.wrap{max-width:1100px;margin:auto;padding:18px 14px 60px}.hero{background:linear-gradient(135deg,#20140b,#171b24 55%,#10131a);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 15px 40px #0006}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:800}.hero h1{font-size:28px;margin:5px 0}.hero p{margin:0;color:var(--muted)}.progressRow{display:flex;justify-content:space-between;align-items:end;margin-top:20px}.pct{font-size:42px;font-weight:900}.bar{height:12px;background:#2b303a;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.35s}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.stat{padding:7px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;background:#ffffff08}.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 4px;position:sticky;top:0;background:#0b0d12ee;backdrop-filter:blur(10px);z-index:5}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#ff7a1818}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}.tools button,.tools input{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px}.tools input{flex:1;min-width:190px;color:var(--text)}.controller{margin:18px 0}.controllerHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.controllerTitle{font-size:18px;font-weight:900}.controllerMeta{font-size:12px;color:var(--muted)}.port{border:1px solid var(--line);border-radius:18px;background:#ffffff04;margin:10px 0;padding:12px}.portHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.portName{font-weight:900}.chain{font-size:11px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:14px;transition:.2s}.card.ready{border-color:var(--green);box-shadow:0 0 0 1px #35d07f22}.cardTop{display:flex;justify-content:space-between;gap:10px}.name{font-weight:900;font-size:16px}.badge{font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px;background:#ffffff0d;white-space:nowrap}.badge.ready{color:#0b2215;background:#35d07f}.meta{font-size:11px;color:var(--muted);margin-top:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.step{border:1px solid var(--line);background:#10131a;border-radius:11px;padding:9px 3px;font-size:10px;font-weight:900;cursor:pointer}.step.active{border-color:var(--accent);background:#ff7a1820}.step.done{border-color:var(--green);background:#35d07f18}.step:focus-visible,.tab:focus-visible,.tools button:focus-visible,.tools input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.chainLine{margin:8px 0 0;padding:8px 10px;border-radius:11px;background:#0e1117;border:1px dashed var(--line);font-size:11px;color:var(--muted)}.chainLine b{color:var(--text)}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:white;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:20}.small{font-size:12px;color:var(--muted)}
+@media(max-width:560px){.wrap{padding:12px 10px 40px}.hero{padding:16px}.hero h1{font-size:23px}.pct{font-size:34px}.steps{gap:4px}.step{font-size:9px;padding:9px 1px}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<div class="eyebrow">🎃 2026 SHOW SEASON</div>
+<h1>Halloween Light Show Command Center</h1>
+<p>Your prop installation mission control.</p>
+<div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ 0 tested</span><span class="stat" id="remainingStat">👻 0 remaining</span></div>
+</section>
+<div class="tabs" id="tabs"></div>
+<div class="tools"><input id="search" placeholder="🔎 Search props..."><button id="reset">↺ Reset progress</button><button id="export">⬇ Export backup</button><label class="tools" style="margin:0"><input id="importFile" type="file" accept=".json" style="display:none"><button type="button" id="importBtn">⬆ Import backup</button></label></div>
+<div id="app"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const DATA={
+  "controllers": [
+    {
+      "name": "FPP-40",
+      "ip": "192.168.50.111",
+      "ports": [
+        {
+          "port": "Pixel Port 1",
+          "models": [
+            "Matrix Left Window"
+          ]
+        },
+        {
+          "port": "Pixel Port 2",
+          "models": [
+            "Matrix Right Window"
+          ]
+        },
+        {
+          "port": "Pixel Port 3",
+          "models": [
+            "Skull Pole L"
+          ]
+        },
+        {
+          "port": "Pixel Port 4",
+          "models": [
+            "Skull Pole R"
+          ]
+        },
+        {
+          "port": "Pixel Port 5",
+          "models": [
+            "GE Web Corner Left"
+          ]
+        },
+        {
+          "port": "Pixel Port 6",
+          "models": [
+            "Ghost RBL 1",
+            "Ghost RBL 2"
+          ]
+        },
+        {
+          "port": "Pixel Port 9",
+          "models": [
+            "Ghost RBL 4",
+            "Ghost RBL 3"
+          ]
+        },
+        {
+          "port": "Pixel Port 10",
+          "models": [
+            "GE Web Corner Right"
+          ]
+        },
+        {
+          "port": "Pixel Port 11",
+          "models": [
+            "Candy-Corn",
+            "Pirate Skull Left"
+          ]
+        },
+        {
+          "port": "Pixel Port 13",
+          "models": [
+            "Gothic-Gargoyle"
+          ]
+        },
+        {
+          "port": "Pixel Port 14",
+          "models": [
+            "Spider Left Peak"
+          ]
+        },
+        {
+          "port": "Pixel Port 15",
+          "models": [
+            "Spider RIght Peak"
+          ]
+        },
+        {
+          "port": "Pixel Port 16",
+          "models": [
+            "Boscoyo ChromaBat left",
+            "Boscoyo ChromaGhost",
+            "Boscoyo ChromaBat right"
+          ]
+        },
+        {
+          "port": "Pixel Port 17",
+          "models": [
+            "Witch with cauldron Non singing"
+          ]
+        },
+        {
+          "port": "Pixel Port 18",
+          "models": [
+            "retro cat"
+          ]
+        },
+        {
+          "port": "Pixel Port 19",
+          "models": [
+            "Arch_Spinner left"
+          ]
+        },
+        {
+          "port": "Pixel Port 20",
+          "models": [
+            "Arch_Pumpkin"
+          ]
+        },
+        {
+          "port": "Pixel Port 25",
+          "models": [
+            "Skeleton_and_Coffin"
+          ]
+        },
+        {
+          "port": "Pixel Port 26",
+          "models": [
+            "Arch_Pumpkin-2"
+          ]
+        },
+        {
+          "port": "Pixel Port 27",
+          "models": [
+            "Arch_Spinner right"
+          ]
+        },
+        {
+          "port": "Pixel Port 28",
+          "models": [
+            "Zombie1",
+            "Zombie2",
+            "Zombie3",
+            "Zombie4",
+            "Zombie5"
+          ]
+        },
+        {
+          "port": "Pixel Port 29",
+          "models": [
+            "Boscoyo Megastone RIP",
+            "Boscoyo ChromaStone 2",
+            "Boscoyo ChromaStone 4",
+            "Boscoyo ChromaStone 3"
+          ]
+        },
+        {
+          "port": "Pixel Port 30",
+          "models": [
+            "Arches Right Middle",
+            "Arches Right",
+            "Skull_Pixel_Stake-3",
+            "Skull_Pixel_Stake-4",
+            "GE Grim Reaper 2019"
+          ]
+        },
+        {
+          "port": "Pixel Port 31",
+          "models": [
+            "Arches Left Middle",
+            "Arches Left",
+            "Skull_Pixel_Stake-1",
+            "Skull_Pixel_Stake-2"
+          ]
+        },
+        {
+          "port": "Pixel Port 32",
+          "models": [
+            "Skull 1",
+            "Skull 2",
+            "Skull 3"
+          ]
+        },
+        {
+          "port": "Pixel Port 33",
+          "models": [
+            "Candy-Corn-2",
+            "Pirate Skull Right",
+            "Skull Wreath"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FPP-32",
+      "ip": "192.168.50.25",
+      "ports": [
+        {
+          "port": "Pixel Port 1",
+          "models": [
+            "Mega Tree-str-1"
+          ]
+        },
+        {
+          "port": "Pixel Port 2",
+          "models": [
+            "Mega Tree-str-2"
+          ]
+        },
+        {
+          "port": "Pixel Port 3",
+          "models": [
+            "Mega Tree-str-3"
+          ]
+        },
+        {
+          "port": "Pixel Port 4",
+          "models": [
+            "Mega Tree-str-4"
+          ]
+        },
+        {
+          "port": "Pixel Port 5",
+          "models": [
+            "Mega Tree-str-5"
+          ]
+        },
+        {
+          "port": "Pixel Port 6",
+          "models": [
+            "Mega Tree-str-6"
+          ]
+        },
+        {
+          "port": "Pixel Port 7",
+          "models": [
+            "Mega Tree-str-7"
+          ]
+        },
+        {
+          "port": "Pixel Port 8",
+          "models": [
+            "Mega Tree-str-8"
+          ]
+        },
+        {
+          "port": "Pixel Port 9",
+          "models": [
+            "Mega Tree-str-9"
+          ]
+        },
+        {
+          "port": "Pixel Port 10",
+          "models": [
+            "Mega Tree-str-10"
+          ]
+        },
+        {
+          "port": "Pixel Port 11",
+          "models": [
+            "Mega Tree-str-11"
+          ]
+        },
+        {
+          "port": "Pixel Port 12",
+          "models": [
+            "Mega Tree-str-12"
+          ]
+        },
+        {
+          "port": "Pixel Port 13",
+          "models": [
+            "Mega Tree-str-13"
+          ]
+        },
+        {
+          "port": "Pixel Port 14",
+          "models": [
+            "Mega Tree-str-14"
+          ]
+        },
+        {
+          "port": "Pixel Port 15",
+          "models": [
+            "Mega Tree-str-15"
+          ]
+        },
+        {
+          "port": "Pixel Port 16",
+          "models": [
+            "Mega Tree-str-16"
+          ]
+        },
+        {
+          "port": "Pixel Port 17",
+          "models": [
+            "Mega Tree-str-17"
+          ]
+        },
+        {
+          "port": "Pixel Port 18",
+          "models": [
+            "Mega Tree-str-18"
+          ]
+        },
+        {
+          "port": "Pixel Port 19",
+          "models": [
+            "Mega Tree-str-19"
+          ]
+        },
+        {
+          "port": "Pixel Port 20",
+          "models": [
+            "Mega Tree-str-20"
+          ]
+        },
+        {
+          "port": "Pixel Port 21",
+          "models": [
+            "Mega Tree-str-21"
+          ]
+        },
+        {
+          "port": "Pixel Port 22",
+          "models": [
+            "Mega Tree-str-22"
+          ]
+        },
+        {
+          "port": "Pixel Port 23",
+          "models": [
+            "Mega Tree-str-23"
+          ]
+        },
+        {
+          "port": "Pixel Port 24",
+          "models": [
+            "Mega Tree-str-24"
+          ]
+        },
+        {
+          "port": "Pixel Port 25",
+          "models": [
+            "Boscoyo Black widow spider-2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "ports": [
+        {
+          "port": "Virtual Matrix Port 1",
+          "models": [
+            "Projector"
+          ]
+        },
+        {
+          "port": "Pixel Port 1",
+          "models": [
+            "Poly Line-2 lower gutter",
+            "Spare bedroom window"
+          ]
+        },
+        {
+          "port": "Pixel Port 2",
+          "models": [
+            "Window Frame left lower"
+          ]
+        },
+        {
+          "port": "Pixel Port 3",
+          "models": [
+            "Poly Line garage door",
+            "Garage Right verticle"
+          ]
+        },
+        {
+          "port": "Pixel Port 4",
+          "models": [
+            "Window Frame right lower"
+          ]
+        },
+        {
+          "port": "Pixel Port 5",
+          "models": [
+            "Garage left verticle"
+          ]
+        },
+        {
+          "port": "Pixel Port 6",
+          "models": [
+            "Front door"
+          ]
+        },
+        {
+          "port": "Pixel Port 1",
+          "models": [
+            "Poly Line upper gutter"
+          ]
+        },
+        {
+          "port": "Pixel Port 2",
+          "models": [
+            "House upper right verticle",
+            "Window Frame right"
+          ]
+        },
+        {
+          "port": "Pixel Port 3",
+          "models": [
+            "House upper middle left verticle",
+            "Window Frame left"
+          ]
+        },
+        {
+          "port": "Pixel Port 4",
+          "models": [
+            "Poly Line-3 garage roof"
+          ]
+        },
+        {
+          "port": "Pixel Port 5",
+          "models": [
+            "Poly Line-5 right roof",
+            "Poly Line-4 left roof"
+          ]
+        },
+        {
+          "port": "Pixel Port 6",
+          "models": [
+            "House upper left verticle"
+          ]
+        },
+        {
+          "port": "Pixel Port 7",
+          "models": [
+            "House upper middle right verticle"
+          ]
+        }
+      ]
+    }
+  ],
+  "props": [
+    {
+      "id": "fpp-40-pixel-port-1-matrix-left-window",
+      "name": "Matrix Left Window",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 1",
+      "chainIndex": 0,
+      "chain": [
+        "Matrix Left Window"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-2-matrix-right-window",
+      "name": "Matrix Right Window",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 2",
+      "chainIndex": 0,
+      "chain": [
+        "Matrix Right Window"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-3-skull-pole-l",
+      "name": "Skull Pole L",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 3",
+      "chainIndex": 0,
+      "chain": [
+        "Skull Pole L"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-4-skull-pole-r",
+      "name": "Skull Pole R",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 4",
+      "chainIndex": 0,
+      "chain": [
+        "Skull Pole R"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-5-ge-web-corner-left",
+      "name": "GE Web Corner Left",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 5",
+      "chainIndex": 0,
+      "chain": [
+        "GE Web Corner Left"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-6-ghost-rbl-1",
+      "name": "Ghost RBL 1",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 6",
+      "chainIndex": 0,
+      "chain": [
+        "Ghost RBL 1",
+        "Ghost RBL 2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-6-ghost-rbl-2",
+      "name": "Ghost RBL 2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 6",
+      "chainIndex": 1,
+      "chain": [
+        "Ghost RBL 1",
+        "Ghost RBL 2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-9-ghost-rbl-4",
+      "name": "Ghost RBL 4",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 9",
+      "chainIndex": 0,
+      "chain": [
+        "Ghost RBL 4",
+        "Ghost RBL 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-9-ghost-rbl-3",
+      "name": "Ghost RBL 3",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 9",
+      "chainIndex": 1,
+      "chain": [
+        "Ghost RBL 4",
+        "Ghost RBL 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-10-ge-web-corner-right",
+      "name": "GE Web Corner Right",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 10",
+      "chainIndex": 0,
+      "chain": [
+        "GE Web Corner Right"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-11-candy-corn",
+      "name": "Candy-Corn",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 11",
+      "chainIndex": 0,
+      "chain": [
+        "Candy-Corn",
+        "Pirate Skull Left"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-11-pirate-skull-left",
+      "name": "Pirate Skull Left",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 11",
+      "chainIndex": 1,
+      "chain": [
+        "Candy-Corn",
+        "Pirate Skull Left"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-13-gothic-gargoyle",
+      "name": "Gothic-Gargoyle",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 13",
+      "chainIndex": 0,
+      "chain": [
+        "Gothic-Gargoyle"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-14-spider-left-peak",
+      "name": "Spider Left Peak",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 14",
+      "chainIndex": 0,
+      "chain": [
+        "Spider Left Peak"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-15-spider-right-peak",
+      "name": "Spider RIght Peak",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 15",
+      "chainIndex": 0,
+      "chain": [
+        "Spider RIght Peak"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-16-boscoyo-chromabat-left",
+      "name": "Boscoyo ChromaBat left",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 16",
+      "chainIndex": 0,
+      "chain": [
+        "Boscoyo ChromaBat left",
+        "Boscoyo ChromaGhost",
+        "Boscoyo ChromaBat right"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-16-boscoyo-chromaghost",
+      "name": "Boscoyo ChromaGhost",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 16",
+      "chainIndex": 1,
+      "chain": [
+        "Boscoyo ChromaBat left",
+        "Boscoyo ChromaGhost",
+        "Boscoyo ChromaBat right"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-16-boscoyo-chromabat-right",
+      "name": "Boscoyo ChromaBat right",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 16",
+      "chainIndex": 2,
+      "chain": [
+        "Boscoyo ChromaBat left",
+        "Boscoyo ChromaGhost",
+        "Boscoyo ChromaBat right"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-17-witch-with-cauldron-non-singing",
+      "name": "Witch with cauldron Non singing",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 17",
+      "chainIndex": 0,
+      "chain": [
+        "Witch with cauldron Non singing"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-18-retro-cat",
+      "name": "retro cat",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 18",
+      "chainIndex": 0,
+      "chain": [
+        "retro cat"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-19-arch-spinner-left",
+      "name": "Arch_Spinner left",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 19",
+      "chainIndex": 0,
+      "chain": [
+        "Arch_Spinner left"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-20-arch-pumpkin",
+      "name": "Arch_Pumpkin",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 20",
+      "chainIndex": 0,
+      "chain": [
+        "Arch_Pumpkin"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-25-skeleton-and-coffin",
+      "name": "Skeleton_and_Coffin",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 25",
+      "chainIndex": 0,
+      "chain": [
+        "Skeleton_and_Coffin"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-26-arch-pumpkin-2",
+      "name": "Arch_Pumpkin-2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 26",
+      "chainIndex": 0,
+      "chain": [
+        "Arch_Pumpkin-2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-27-arch-spinner-right",
+      "name": "Arch_Spinner right",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 27",
+      "chainIndex": 0,
+      "chain": [
+        "Arch_Spinner right"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-28-zombie1",
+      "name": "Zombie1",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 28",
+      "chainIndex": 0,
+      "chain": [
+        "Zombie1",
+        "Zombie2",
+        "Zombie3",
+        "Zombie4",
+        "Zombie5"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-28-zombie2",
+      "name": "Zombie2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 28",
+      "chainIndex": 1,
+      "chain": [
+        "Zombie1",
+        "Zombie2",
+        "Zombie3",
+        "Zombie4",
+        "Zombie5"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-28-zombie3",
+      "name": "Zombie3",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 28",
+      "chainIndex": 2,
+      "chain": [
+        "Zombie1",
+        "Zombie2",
+        "Zombie3",
+        "Zombie4",
+        "Zombie5"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-28-zombie4",
+      "name": "Zombie4",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 28",
+      "chainIndex": 3,
+      "chain": [
+        "Zombie1",
+        "Zombie2",
+        "Zombie3",
+        "Zombie4",
+        "Zombie5"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-28-zombie5",
+      "name": "Zombie5",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 28",
+      "chainIndex": 4,
+      "chain": [
+        "Zombie1",
+        "Zombie2",
+        "Zombie3",
+        "Zombie4",
+        "Zombie5"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-29-boscoyo-megastone-rip",
+      "name": "Boscoyo Megastone RIP",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 29",
+      "chainIndex": 0,
+      "chain": [
+        "Boscoyo Megastone RIP",
+        "Boscoyo ChromaStone 2",
+        "Boscoyo ChromaStone 4",
+        "Boscoyo ChromaStone 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-29-boscoyo-chromastone-2",
+      "name": "Boscoyo ChromaStone 2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 29",
+      "chainIndex": 1,
+      "chain": [
+        "Boscoyo Megastone RIP",
+        "Boscoyo ChromaStone 2",
+        "Boscoyo ChromaStone 4",
+        "Boscoyo ChromaStone 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-29-boscoyo-chromastone-4",
+      "name": "Boscoyo ChromaStone 4",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 29",
+      "chainIndex": 2,
+      "chain": [
+        "Boscoyo Megastone RIP",
+        "Boscoyo ChromaStone 2",
+        "Boscoyo ChromaStone 4",
+        "Boscoyo ChromaStone 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-29-boscoyo-chromastone-3",
+      "name": "Boscoyo ChromaStone 3",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 29",
+      "chainIndex": 3,
+      "chain": [
+        "Boscoyo Megastone RIP",
+        "Boscoyo ChromaStone 2",
+        "Boscoyo ChromaStone 4",
+        "Boscoyo ChromaStone 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-30-arches-right-middle",
+      "name": "Arches Right Middle",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 30",
+      "chainIndex": 0,
+      "chain": [
+        "Arches Right Middle",
+        "Arches Right",
+        "Skull_Pixel_Stake-3",
+        "Skull_Pixel_Stake-4",
+        "GE Grim Reaper 2019"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-30-arches-right",
+      "name": "Arches Right",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 30",
+      "chainIndex": 1,
+      "chain": [
+        "Arches Right Middle",
+        "Arches Right",
+        "Skull_Pixel_Stake-3",
+        "Skull_Pixel_Stake-4",
+        "GE Grim Reaper 2019"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-30-skull-pixel-stake-3",
+      "name": "Skull_Pixel_Stake-3",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 30",
+      "chainIndex": 2,
+      "chain": [
+        "Arches Right Middle",
+        "Arches Right",
+        "Skull_Pixel_Stake-3",
+        "Skull_Pixel_Stake-4",
+        "GE Grim Reaper 2019"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-30-skull-pixel-stake-4",
+      "name": "Skull_Pixel_Stake-4",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 30",
+      "chainIndex": 3,
+      "chain": [
+        "Arches Right Middle",
+        "Arches Right",
+        "Skull_Pixel_Stake-3",
+        "Skull_Pixel_Stake-4",
+        "GE Grim Reaper 2019"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-30-ge-grim-reaper-2019",
+      "name": "GE Grim Reaper 2019",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 30",
+      "chainIndex": 4,
+      "chain": [
+        "Arches Right Middle",
+        "Arches Right",
+        "Skull_Pixel_Stake-3",
+        "Skull_Pixel_Stake-4",
+        "GE Grim Reaper 2019"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-31-arches-left-middle",
+      "name": "Arches Left Middle",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 31",
+      "chainIndex": 0,
+      "chain": [
+        "Arches Left Middle",
+        "Arches Left",
+        "Skull_Pixel_Stake-1",
+        "Skull_Pixel_Stake-2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-31-arches-left",
+      "name": "Arches Left",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 31",
+      "chainIndex": 1,
+      "chain": [
+        "Arches Left Middle",
+        "Arches Left",
+        "Skull_Pixel_Stake-1",
+        "Skull_Pixel_Stake-2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-31-skull-pixel-stake-1",
+      "name": "Skull_Pixel_Stake-1",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 31",
+      "chainIndex": 2,
+      "chain": [
+        "Arches Left Middle",
+        "Arches Left",
+        "Skull_Pixel_Stake-1",
+        "Skull_Pixel_Stake-2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-31-skull-pixel-stake-2",
+      "name": "Skull_Pixel_Stake-2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 31",
+      "chainIndex": 3,
+      "chain": [
+        "Arches Left Middle",
+        "Arches Left",
+        "Skull_Pixel_Stake-1",
+        "Skull_Pixel_Stake-2"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-32-skull-1",
+      "name": "Skull 1",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 32",
+      "chainIndex": 0,
+      "chain": [
+        "Skull 1",
+        "Skull 2",
+        "Skull 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-32-skull-2",
+      "name": "Skull 2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 32",
+      "chainIndex": 1,
+      "chain": [
+        "Skull 1",
+        "Skull 2",
+        "Skull 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-32-skull-3",
+      "name": "Skull 3",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 32",
+      "chainIndex": 2,
+      "chain": [
+        "Skull 1",
+        "Skull 2",
+        "Skull 3"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-33-candy-corn-2",
+      "name": "Candy-Corn-2",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 33",
+      "chainIndex": 0,
+      "chain": [
+        "Candy-Corn-2",
+        "Pirate Skull Right",
+        "Skull Wreath"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-33-pirate-skull-right",
+      "name": "Pirate Skull Right",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 33",
+      "chainIndex": 1,
+      "chain": [
+        "Candy-Corn-2",
+        "Pirate Skull Right",
+        "Skull Wreath"
+      ]
+    },
+    {
+      "id": "fpp-40-pixel-port-33-skull-wreath",
+      "name": "Skull Wreath",
+      "controller": "FPP-40",
+      "ip": "192.168.50.111",
+      "port": "Pixel Port 33",
+      "chainIndex": 2,
+      "chain": [
+        "Candy-Corn-2",
+        "Pirate Skull Right",
+        "Skull Wreath"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-1-mega-tree-str-1",
+      "name": "Mega Tree-str-1",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 1",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-1"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-2-mega-tree-str-2",
+      "name": "Mega Tree-str-2",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 2",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-2"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-3-mega-tree-str-3",
+      "name": "Mega Tree-str-3",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 3",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-3"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-4-mega-tree-str-4",
+      "name": "Mega Tree-str-4",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 4",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-4"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-5-mega-tree-str-5",
+      "name": "Mega Tree-str-5",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 5",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-5"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-6-mega-tree-str-6",
+      "name": "Mega Tree-str-6",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 6",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-6"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-7-mega-tree-str-7",
+      "name": "Mega Tree-str-7",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 7",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-7"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-8-mega-tree-str-8",
+      "name": "Mega Tree-str-8",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 8",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-8"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-9-mega-tree-str-9",
+      "name": "Mega Tree-str-9",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 9",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-9"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-10-mega-tree-str-10",
+      "name": "Mega Tree-str-10",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 10",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-10"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-11-mega-tree-str-11",
+      "name": "Mega Tree-str-11",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 11",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-11"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-12-mega-tree-str-12",
+      "name": "Mega Tree-str-12",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 12",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-12"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-13-mega-tree-str-13",
+      "name": "Mega Tree-str-13",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 13",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-13"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-14-mega-tree-str-14",
+      "name": "Mega Tree-str-14",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 14",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-14"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-15-mega-tree-str-15",
+      "name": "Mega Tree-str-15",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 15",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-15"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-16-mega-tree-str-16",
+      "name": "Mega Tree-str-16",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 16",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-16"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-17-mega-tree-str-17",
+      "name": "Mega Tree-str-17",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 17",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-17"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-18-mega-tree-str-18",
+      "name": "Mega Tree-str-18",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 18",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-18"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-19-mega-tree-str-19",
+      "name": "Mega Tree-str-19",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 19",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-19"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-20-mega-tree-str-20",
+      "name": "Mega Tree-str-20",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 20",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-20"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-21-mega-tree-str-21",
+      "name": "Mega Tree-str-21",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 21",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-21"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-22-mega-tree-str-22",
+      "name": "Mega Tree-str-22",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 22",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-22"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-23-mega-tree-str-23",
+      "name": "Mega Tree-str-23",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 23",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-23"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-24-mega-tree-str-24",
+      "name": "Mega Tree-str-24",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 24",
+      "chainIndex": 0,
+      "chain": [
+        "Mega Tree-str-24"
+      ]
+    },
+    {
+      "id": "fpp-32-pixel-port-25-boscoyo-black-widow-spider-2",
+      "name": "Boscoyo Black widow spider-2",
+      "controller": "FPP-32",
+      "ip": "192.168.50.25",
+      "port": "Pixel Port 25",
+      "chainIndex": 0,
+      "chain": [
+        "Boscoyo Black widow spider-2"
+      ]
+    },
+    {
+      "id": "fpp-projector-virtual-matrix-port-1-projector",
+      "name": "Projector",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Virtual Matrix Port 1",
+      "chainIndex": 0,
+      "chain": [
+        "Projector"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-1-poly-line-2-lower-gutter",
+      "name": "Poly Line-2 lower gutter",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 1",
+      "chainIndex": 0,
+      "chain": [
+        "Poly Line-2 lower gutter",
+        "Spare bedroom window"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-1-spare-bedroom-window",
+      "name": "Spare bedroom window",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 1",
+      "chainIndex": 1,
+      "chain": [
+        "Poly Line-2 lower gutter",
+        "Spare bedroom window"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-2-window-frame-left-lower",
+      "name": "Window Frame left lower",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 2",
+      "chainIndex": 0,
+      "chain": [
+        "Window Frame left lower"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-3-poly-line-garage-door",
+      "name": "Poly Line garage door",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 3",
+      "chainIndex": 0,
+      "chain": [
+        "Poly Line garage door",
+        "Garage Right verticle"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-3-garage-right-verticle",
+      "name": "Garage Right verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 3",
+      "chainIndex": 1,
+      "chain": [
+        "Poly Line garage door",
+        "Garage Right verticle"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-4-window-frame-right-lower",
+      "name": "Window Frame right lower",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 4",
+      "chainIndex": 0,
+      "chain": [
+        "Window Frame right lower"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-5-garage-left-verticle",
+      "name": "Garage left verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 5",
+      "chainIndex": 0,
+      "chain": [
+        "Garage left verticle"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-6-front-door",
+      "name": "Front door",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 6",
+      "chainIndex": 0,
+      "chain": [
+        "Front door"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-1-poly-line-upper-gutter",
+      "name": "Poly Line upper gutter",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 1",
+      "chainIndex": 0,
+      "chain": [
+        "Poly Line upper gutter"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-2-house-upper-right-verticle",
+      "name": "House upper right verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 2",
+      "chainIndex": 0,
+      "chain": [
+        "House upper right verticle",
+        "Window Frame right"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-2-window-frame-right",
+      "name": "Window Frame right",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 2",
+      "chainIndex": 1,
+      "chain": [
+        "House upper right verticle",
+        "Window Frame right"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-3-house-upper-middle-left-verticle",
+      "name": "House upper middle left verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 3",
+      "chainIndex": 0,
+      "chain": [
+        "House upper middle left verticle",
+        "Window Frame left"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-3-window-frame-left",
+      "name": "Window Frame left",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 3",
+      "chainIndex": 1,
+      "chain": [
+        "House upper middle left verticle",
+        "Window Frame left"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-4-poly-line-3-garage-roof",
+      "name": "Poly Line-3 garage roof",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 4",
+      "chainIndex": 0,
+      "chain": [
+        "Poly Line-3 garage roof"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-5-poly-line-5-right-roof",
+      "name": "Poly Line-5 right roof",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 5",
+      "chainIndex": 0,
+      "chain": [
+        "Poly Line-5 right roof",
+        "Poly Line-4 left roof"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-5-poly-line-4-left-roof",
+      "name": "Poly Line-4 left roof",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 5",
+      "chainIndex": 1,
+      "chain": [
+        "Poly Line-5 right roof",
+        "Poly Line-4 left roof"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-6-house-upper-left-verticle",
+      "name": "House upper left verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 6",
+      "chainIndex": 0,
+      "chain": [
+        "House upper left verticle"
+      ]
+    },
+    {
+      "id": "fpp-projector-pixel-port-7-house-upper-middle-right-verticle",
+      "name": "House upper middle right verticle",
+      "controller": "FPP-Projector",
+      "ip": "192.168.50.128",
+      "port": "Pixel Port 7",
+      "chainIndex": 0,
+      "chain": [
+        "House upper middle right verticle"
+      ]
+    }
+  ]
+};
+const stages=["UNSTARTED","INSTALLED","WIRED","TESTED"];
+const icons=["⬜","🏠","🔌","⚡"];
+const key="halloween-light-show-progress-v1";
+let state=JSON.parse(localStorage.getItem(key)||"{}");
+let filter="ALL", query="";
+function save(){localStorage.setItem(key,JSON.stringify(state));}
+function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display="none",1800)}
+function stage(id){return Number(state[id]||0)}
+function renderTabs(){
+ const tabs=document.getElementById("tabs");
+ tabs.innerHTML='<button class="tab '+(filter==="ALL"?"active":"")+'" data-filter="ALL">ALL</button>'+
+ DATA.controllers.map(c=>'<button class="tab '+(filter===c.name?"active":"")+'" data-filter="'+esc(c.name)+'">'+(c.name==="FPP-40"?"🎃 ":c.name==="FPP-32"?"🌲 ":"📽️ ")+esc(c.name)+'</button>').join("");
+}
+function render(){
+ renderTabs();
+ const app=document.getElementById("app");
+ let total=DATA.props.length, ready=0, installed=0,wired=0,tested=0;
+ DATA.props.forEach(p=>{let s=stage(p.id);if(s>=1)installed++;if(s>=2)wired++;if(s>=3)tested++;if(s>=4)ready++});
+ let pct=total?Math.round(ready/total*100):0;
+ document.getElementById("pct").textContent=pct+"%";
+ document.getElementById("fill").style.width=pct+"%";
+ document.getElementById("readyBig").textContent=ready+" SHOW READY";
+ document.getElementById("totalBig").textContent="of "+total+" props";
+ document.getElementById("installedStat").textContent="🏠 "+installed+" installed";
+ document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
+ document.getElementById("testedStat").textContent="⚡ "+tested+" tested";
+ document.getElementById("remainingStat").textContent="👻 "+(total-ready)+" remaining";
+ let controllers=DATA.controllers.filter(c=>filter==="ALL"||c.name===filter);
+ let any=false;
+ app.innerHTML=controllers.map(c=>{
+   const ports=c.ports.filter(p=>p.models.some(m=>matches(c,p,m)));
+   if(!ports.length)return "";
+   any=true;
+   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(c.name==="FPP-40"?"🎃":c.name==="FPP-32"?"🌲":"📽️")+" "+esc(c.name)+'</div><div class="controllerMeta">DDP '+esc(c.ip)+'</div></div></div>'+
+   ports.map(p=>'<div class="port"><div class="portHead"><div class="portName">'+esc(p.port)+'</div><div class="chain">'+(p.models.length>1?"🔗 "+p.models.map(esc).join(" → "):"")+'</div></div><div class="cards">'+p.models.map((m,i)=>card(c,p,m,i)).join("")+'</div></div>').join("")+'</section>';
+ }).join("") || '<div class="empty">No props match your search.</div>';
+}
+function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
+function card(c,p,m,i){
+ const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id), ready=s===4;
+ const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Connection:</b> '+(i===0?"Controller → "+esc(m):esc(p.models[i-1])+" → "+esc(m))+(i<p.models.length-1?" → "+esc(p.models[i+1]):"")+'</div>' : "";
+ return '<article class="card '+(ready?"ready":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(c.name)+' • '+esc(p.port)+'</div></div><span class="badge '+(ready?"ready":"")+'">'+(ready?"🎉 READY":stages[Math.min(s,3)])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(s>j?"done ":"")+(s===j?"active":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><div class="small" style="margin-top:9px">'+(ready?"🎉 This prop is show ready!":"Next: "+stages[Math.min(s+1,3)])+'</div></article>';
+}
+function slug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.filter){filter=b.dataset.filter;render();return}
+ if(b.dataset.id){state[b.dataset.id]=Number(b.dataset.stage);save();render();showToast(Number(b.dataset.stage)===3?"⚡ Tested!":"Progress saved");return}
+ if(b.id==="reset"){if(confirm("Reset every prop to Unstarted?")){state={};save();render();showToast("All props reset")}}
+ if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+ if(b.id==="importBtn")document.getElementById("importFile").click();
+});
+document.getElementById("search").addEventListener("input",e=>{query=e.target.value;render()});
+document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};save();render();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
+render();
+</script>
+</body>
+</html>
