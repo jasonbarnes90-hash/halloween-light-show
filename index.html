@@ -8,8 +8,10 @@
 <title>Halloween Light Show Command Center</title>
 <style>
 :root{--bg:#0b0d12;--panel:#151922;--card:#1b202b;--line:#303746;--text:#f7f7f8;--muted:#a9b0bd;--accent:#ff7a18;--green:#35d07f;--yellow:#f5c542;--red:#ff5d5d;--blue:#59a8ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#222938 0,#0b0d12 42%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;color:inherit}.wrap{max-width:1100px;margin:auto;padding:18px 14px 60px}.hero{background:linear-gradient(135deg,#20140b,#171b24 55%,#10131a);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 15px 40px #0006}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:800}.hero h1{font-size:28px;margin:5px 0}.hero p{margin:0;color:var(--muted)}.progressRow{display:flex;justify-content:space-between;align-items:end;margin-top:20px}.pct{font-size:42px;font-weight:900}.bar{height:12px;background:#2b303a;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.35s}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.stat{padding:7px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;background:#ffffff08}.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 4px;position:sticky;top:0;background:#0b0d12ee;backdrop-filter:blur(10px);z-index:5}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#ff7a1818}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}.tools button,.tools input{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px}.tools input{flex:1;min-width:190px;color:var(--text)}.controller{margin:18px 0}.controllerHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.controllerTitle{font-size:18px;font-weight:900}.controllerMeta{font-size:12px;color:var(--muted)}.port{border:1px solid var(--line);border-radius:18px;background:#ffffff04;margin:10px 0;padding:12px}.portHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.portName{font-weight:900}.chain{font-size:11px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:14px;transition:.2s}.card.ready{border-color:var(--green);box-shadow:0 0 0 1px #35d07f22}.cardTop{display:flex;justify-content:space-between;gap:10px}.name{font-weight:900;font-size:16px}.badge{font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px;background:#ffffff0d;white-space:nowrap}.badge.ready{color:#0b2215;background:#35d07f}.meta{font-size:11px;color:var(--muted);margin-top:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.step{border:1px solid var(--line);background:#10131a;border-radius:11px;padding:9px 3px;font-size:10px;font-weight:900;cursor:pointer}.step.active{border-color:var(--accent);background:#ff7a1820}.step.done{border-color:var(--green);background:#35d07f18}.step:focus-visible,.tab:focus-visible,.tools button:focus-visible,.tools input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.chainLine{margin:8px 0 0;padding:8px 10px;border-radius:11px;background:#0e1117;border:1px dashed var(--line);font-size:11px;color:var(--muted)}.chainLine b{color:var(--text)}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:white;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:20}.small{font-size:12px;color:var(--muted)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#222938 0,#0b0d12 42%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;color:inherit}.wrap{max-width:1100px;margin:auto;padding:18px 14px 60px}.hero{background:linear-gradient(135deg,#20140b,#171b24 55%,#10131a);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 15px 40px #0006}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:800}.hero h1{font-size:28px;margin:5px 0}.hero p{margin:0;color:var(--muted)}.progressRow{display:flex;justify-content:space-between;align-items:end;margin-top:20px}.pct{font-size:42px;font-weight:900}.bar{height:12px;background:#2b303a;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.35s}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.stat{padding:7px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;background:#ffffff08}.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 4px;position:sticky;top:0;background:#0b0d12ee;backdrop-filter:blur(10px);z-index:5}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#ff7a1818}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}.tools button,.tools input{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px}.tools input{flex:1;min-width:190px;color:var(--text)}.testBtn{border-color:var(--green)!important;background:#35d07f18!important;font-weight:900}.testBtn.complete{background:var(--green)!important;color:#0b2215!important}.controller{margin:18px 0}.controllerHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.controllerTitle{font-size:18px;font-weight:900}.controllerMeta{font-size:12px;color:var(--muted)}.port{border:1px solid var(--line);border-radius:18px;background:#ffffff04;margin:10px 0;padding:12px}.portHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.portName{font-weight:900}.chain{font-size:11px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:14px;transition:.2s}.card.ready{border-color:var(--green);box-shadow:0 0 0 1px #35d07f22}.cardTop{display:flex;justify-content:space-between;gap:10px}.name{font-weight:900;font-size:16px}.badge{font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px;background:#ffffff0d;white-space:nowrap}.badge.ready{color:#0b2215;background:#35d07f}.meta{font-size:11px;color:var(--muted);margin-top:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.step{border:1px solid var(--line);background:#10131a;border-radius:11px;padding:9px 3px;font-size:10px;font-weight:900;cursor:pointer}.step.active{border-color:var(--accent);background:#ff7a1820}.step.done{border-color:var(--green);background:#35d07f18}.completeProp{width:100%;margin-top:9px;border:1px solid var(--green);background:#35d07f12;border-radius:11px;padding:10px;font-weight:900;cursor:pointer}.completeProp:disabled{opacity:.45;cursor:not-allowed}.completeProp.complete{background:var(--green);color:#0b2215}.completeProp:focus-visible,.step:focus-visible,.tab:focus-visible,.tools button:focus-visible,.tools input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.chainLine{margin:8px 0 0;padding:8px 10px;border-radius:11px;background:#0e1117;border:1px dashed var(--line);font-size:11px;color:var(--muted)}.chainLine b{color:var(--text)}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:white;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:20}.small{font-size:12px;color:var(--muted)}
 @media(max-width:560px){.wrap{padding:12px 10px 40px}.hero{padding:16px}.hero h1{font-size:23px}.pct{font-size:34px}.steps{gap:4px}.step{font-size:9px;padding:9px 1px}.cards{grid-template-columns:1fr}}
+.step.completeStep{background:var(--green);color:#0b2215;border-color:var(--green)}
+.step.wiredGreen{background:var(--green);color:#0b2215;border-color:var(--green)}
 </style>
 </head>
 <body>
@@ -20,10 +22,10 @@
 <p>Your prop installation mission control.</p>
 <div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ 0 tested</span><span class="stat" id="remainingStat">👻 0 remaining</span></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
-<div class="tools"><input id="search" placeholder="🔎 Search props..."><button id="reset">↺ Reset progress</button><button id="export">⬇ Export backup</button><label class="tools" style="margin:0"><input id="importFile" type="file" accept=".json" style="display:none"><button type="button" id="importBtn">⬆ Import backup</button></label></div>
+<div class="tools"><input id="search" placeholder="🔎 Search props..."><button id="testComplete" class="testBtn">⚡ SHOW TESTING COMPLETE</button><button id="reset">↺ Reset progress</button><button id="export">⬇ Export backup</button><label class="tools" style="margin:0"><input id="importFile" type="file" accept=".json" style="display:none"><button type="button" id="importBtn">⬆ Import backup</button></label></div>
 <div id="app"></div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1591,61 +1593,89 @@ const DATA={
     }
   ]
 };
-const stages=["UNSTARTED","INSTALLED","WIRED","TESTED"];
-const icons=["⬜","🏠","🔌","⚡"];
-const key="halloween-light-show-progress-v1";
-let state=JSON.parse(localStorage.getItem(key)||"{}");
+const stages=["UNSTARTED","INSTALLED","WIRED"];
+const icons=["⬜","🏠","🔌"];
+const key="halloween-light-show-progress-v2";
+const controllers=DATA.controllers.filter(c=>!/wled/i.test(c.name));
+const props=controllers.flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))));
+let saved=JSON.parse(localStorage.getItem(key)||"{}");
+// Carry forward the old app's per-prop progress. Old TESTED (3) becomes WIRED (2).
+let state=saved.state||saved||{};
+if(state && state.__showTestingComplete!==undefined){ /* v2 */ }
+let testingComplete=Boolean(saved.__showTestingComplete);
+let completedProps=saved.__completedProps||{};
+delete state.__showTestingComplete;
+delete state.__completedProps;
 let filter="ALL", query="";
-function save(){localStorage.setItem(key,JSON.stringify(state));}
+function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps}));}
 function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display="none",1800)}
-function stage(id){return Number(state[id]||0)}
+function stage(id){return Math.min(Number(state[id]||0),2)}
 function renderTabs(){
  const tabs=document.getElementById("tabs");
- tabs.innerHTML='<button class="tab '+(filter==="ALL"?"active":"")+'" data-filter="ALL">ALL</button>'+
- DATA.controllers.map(c=>'<button class="tab '+(filter===c.name?"active":"")+'" data-filter="'+esc(c.name)+'">'+(c.name==="FPP-40"?"🎃 ":c.name==="FPP-32"?"🌲 ":"📽️ ")+esc(c.name)+'</button>').join("");
+ tabs.innerHTML='<button class="tab '+(filter==="ALL"?"active":"")+'" data-filter="ALL">ALL</button>'+controllers.map(c=>'<button class="tab '+(filter===c.name?"active":"")+'" data-filter="'+esc(c.name)+'">'+(c.name==="FPP-40"?"🎃 ":c.name==="FPP-32"?"🌲 ":"📽️ ")+esc(c.name)+'</button>').join("");
 }
 function render(){
  renderTabs();
  const app=document.getElementById("app");
- let total=DATA.props.length, ready=0, installed=0,wired=0,tested=0;
- DATA.props.forEach(p=>{let s=stage(p.id);if(s>=1)installed++;if(s>=2)wired++;if(s>=3)tested++;if(s>=4)ready++});
- let pct=total?Math.round(ready/total*100):0;
+ let total=props.length, ready=0, installed=0,wired=0,completed=0;
+ props.forEach(({controller:c,port:p,model:m})=>{
+   const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
+   if(s>=1)installed++;
+   if(s>=2)wired++;
+   if(completedProps[id])completed++;
+ });
+ // Each prop becomes fully green when its COMPLETE button is pressed.
+ let pct=total?Math.round((completed/total)*100):0;
  document.getElementById("pct").textContent=pct+"%";
  document.getElementById("fill").style.width=pct+"%";
- document.getElementById("readyBig").textContent=ready+" SHOW READY";
+ document.getElementById("readyBig").textContent=testingComplete?"🎉 SHOW READY":"SHOW SETUP";
  document.getElementById("totalBig").textContent="of "+total+" props";
  document.getElementById("installedStat").textContent="🏠 "+installed+" installed";
  document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
- document.getElementById("testedStat").textContent="⚡ "+tested+" tested";
- document.getElementById("remainingStat").textContent="👻 "+(total-ready)+" remaining";
- let controllers=DATA.controllers.filter(c=>filter==="ALL"||c.name===filter);
+ document.getElementById("testedStat").textContent=testingComplete?"⚡ Testing complete":"⚡ Testing not complete";
+ document.getElementById("remainingStat").textContent="👻 "+(total-wired)+" to wire";
+ const tb=document.getElementById("testComplete");
+ tb.textContent=testingComplete?"✓ SHOW TESTING COMPLETE":"⚡ MARK SHOW TESTING COMPLETE";
+ tb.classList.toggle("complete",testingComplete);
+ let shownControllers=controllers.filter(c=>filter==="ALL"||c.name===filter);
  let any=false;
- app.innerHTML=controllers.map(c=>{
+ app.innerHTML=shownControllers.map(c=>{
    const ports=c.ports.filter(p=>p.models.some(m=>matches(c,p,m)));
    if(!ports.length)return "";
    any=true;
-   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(c.name==="FPP-40"?"🎃":c.name==="FPP-32"?"🌲":"📽️")+" "+esc(c.name)+'</div><div class="controllerMeta">DDP '+esc(c.ip)+'</div></div></div>'+
-   ports.map(p=>'<div class="port"><div class="portHead"><div class="portName">'+esc(p.port)+'</div><div class="chain">'+(p.models.length>1?"🔗 "+p.models.map(esc).join(" → "):"")+'</div></div><div class="cards">'+p.models.map((m,i)=>card(c,p,m,i)).join("")+'</div></div>').join("")+'</section>';
+   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(c.name==="FPP-40"?"🎃":c.name==="FPP-32"?"🌲":"📽️")+" "+esc(c.name)+'</div><div class="controllerMeta">DDP '+esc(c.ip)+'</div></div></div>'+ports.map(p=>'<div class="port"><div class="portHead"><div class="portName">'+esc(p.port)+'</div><div class="chain">'+(p.models.length>1?"🔗 "+p.models.map(esc).join(" → "):"")+'</div></div><div class="cards">'+p.models.map((m,i)=>card(c,p,m,i)).join("")+"</div></div>").join("")+"</section>";
  }).join("") || '<div class="empty">No props match your search.</div>';
 }
 function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
 function card(c,p,m,i){
- const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id), ready=s===4;
- const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Connection:</b> '+(i===0?"Controller → "+esc(m):esc(p.models[i-1])+" → "+esc(m))+(i<p.models.length-1?" → "+esc(p.models[i+1]):"")+'</div>' : "";
- return '<article class="card '+(ready?"ready":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(c.name)+' • '+esc(p.port)+'</div></div><span class="badge '+(ready?"ready":"")+'">'+(ready?"🎉 READY":stages[Math.min(s,3)])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(s>j?"done ":"")+(s===j?"active":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><div class="small" style="margin-top:9px">'+(ready?"🎉 This prop is show ready!":"Next: "+stages[Math.min(s+1,3)])+'</div></article>';
+ const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
+ const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Connection:</b> '+(i===0?"Controller → "+esc(m):esc(p.models[i-1])+" → "+esc(m))+(i<p.models.length-1?" → "+esc(p.models[i+1]):"")+"</div>" : "";
+ const isComplete=Boolean(completedProps[id]);
+ return '<article class="card '+(isComplete?"ready":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(c.name)+' • '+esc(p.port)+'</div></div><span class="badge '+(isComplete?"ready":"")+'">'+(isComplete?"🎉 COMPLETE":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(s>j?"done ":"")+(s===j?"active ":"")+(s===2&&j===2?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><button class="completeProp '+(isComplete?"complete":"")+'" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
 }
 function slug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
  if(b.dataset.filter){filter=b.dataset.filter;render();return}
- if(b.dataset.id){state[b.dataset.id]=Number(b.dataset.stage);save();render();showToast(Number(b.dataset.stage)===3?"⚡ Tested!":"Progress saved");return}
- if(b.id==="reset"){if(confirm("Reset every prop to Unstarted?")){state={};save();render();showToast("All props reset")}}
- if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+ if(b.dataset.completeId){
+   const id=b.dataset.completeId;
+   if(!completedProps[id] && stage(id)<2){showToast("Wire this prop before marking it complete");return}
+   completedProps[id]=!completedProps[id];
+   save();render();showToast(completedProps[id]?"✓ Prop marked complete":"Prop marked incomplete");return
+ }
+ if(b.dataset.id){state[b.dataset.id]=Number(b.dataset.stage);if(Number(b.dataset.stage)<2)delete completedProps[b.dataset.id];save();render();showToast("Progress saved");return}
+ if(b.id==="testComplete"){
+   if(testingComplete){testingComplete=false;showToast("Show testing marked incomplete");}
+   else {testingComplete=true;showToast("⚡ Show testing complete!");}
+   save();render();return;
+ }
+ if(b.id==="reset"){if(confirm("Reset every prop to Unstarted and clear show testing?")){state={};testingComplete=false;completedProps={};save();render();showToast("All progress reset")}}
+ if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state,__showTestingComplete:testingComplete,__completedProps:completedProps},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
  if(b.id==="importBtn")document.getElementById("importFile").click();
 });
 document.getElementById("search").addEventListener("input",e=>{query=e.target.value;render()});
-document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};save();render();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
+document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};testingComplete=Boolean(x.__showTestingComplete);completedProps=x.__completedProps||{};delete state.__showTestingComplete;delete state.__completedProps;save();render();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
 render();
 </script>
 </body>
