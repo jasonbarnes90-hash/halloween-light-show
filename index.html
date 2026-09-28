@@ -1514,9 +1514,14 @@ document.getElementById("mapClose").addEventListener("click",()=>document.getEle
 document.getElementById("mapModal").addEventListener("click",e=>{if(e.target.id==="mapModal")e.currentTarget.classList.remove("open")});
 function clampPan(){
   const v=document.getElementById('mapViewport'); if(!v)return;
-  if(mapZoom<=1){mapPanX=0;mapPanY=0;return;}
   const vw=v.clientWidth, vh=v.clientHeight;
   const sw=vw*mapZoom, sh=(vw*700/1500)*mapZoom;
+  if(mapZoom<=1){
+    const margin=Math.min(90,Math.max(40,Math.min(vw,vh)*0.12));
+    mapPanX=Math.min(margin,Math.max(-margin,mapPanX));
+    mapPanY=Math.min(margin,Math.max(-margin,mapPanY));
+    return;
+  }
   mapPanX=Math.min(0,Math.max(vw-sw,mapPanX));
   mapPanY=Math.min(0,Math.max(vh-sh,mapPanY));
 }
@@ -1534,7 +1539,7 @@ document.getElementById('mapZoomOut').addEventListener('click',()=>setZoom(mapZo
 document.getElementById('mapZoomReset').addEventListener('click',()=>{mapZoom=1;mapPanX=0;mapPanY=0;mapRender();document.getElementById('mapZoomReset').textContent='100%';});
 const mv=document.getElementById('mapViewport');
 let dragging=false, sx=0, sy=0, spx=0, spy=0;
-mv.addEventListener('pointerdown',e=>{if(mapZoom<=1||e.target.closest('.mapHotspot'))return;dragging=true;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
+mv.addEventListener('pointerdown',e=>{if(e.target.closest('.mapHotspot'))return;dragging=true;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
 mv.addEventListener('pointermove',e=>{if(!dragging)return;mapPanX=spx+(e.clientX-sx);mapPanY=spy+(e.clientY-sy);clampPan();applyMapTransform();});
 mv.addEventListener('pointerup',e=>{if(!dragging)return;dragging=false;mv.classList.remove('dragging');try{mv.releasePointerCapture(e.pointerId)}catch{}});
 mv.addEventListener('pointercancel',()=>{dragging=false;mv.classList.remove('dragging')});
