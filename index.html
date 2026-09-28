@@ -1538,11 +1538,26 @@ document.getElementById('mapZoomIn').addEventListener('click',()=>setZoom(mapZoo
 document.getElementById('mapZoomOut').addEventListener('click',()=>setZoom(mapZoom-.25));
 document.getElementById('mapZoomReset').addEventListener('click',()=>{mapZoom=1;mapPanX=0;mapPanY=0;mapRender();document.getElementById('mapZoomReset').textContent='100%';});
 const mv=document.getElementById('mapViewport');
-let dragging=false, sx=0, sy=0, spx=0, spy=0;
-mv.addEventListener('pointerdown',e=>{if(e.target.closest('.mapHotspot'))return;dragging=true;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
-mv.addEventListener('pointermove',e=>{if(!dragging)return;mapPanX=spx+(e.clientX-sx);mapPanY=spy+(e.clientY-sy);clampPan();applyMapTransform();});
+let dragging=false, mapMoved=false, sx=0, sy=0, spx=0, spy=0;
+mv.addEventListener('pointerdown',e=>{if(e.target.closest('.mapHotspot'))return;dragging=true;mapMoved=false;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
+mv.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.hypot(dx,dy)>6)mapMoved=true;mapPanX=spx+dx;mapPanY=spy+dy;clampPan();applyMapTransform();});
 mv.addEventListener('pointerup',e=>{if(!dragging)return;dragging=false;mv.classList.remove('dragging');try{mv.releasePointerCapture(e.pointerId)}catch{}});
-mv.addEventListener('pointercancel',()=>{dragging=false;mv.classList.remove('dragging')});
+mv.addEventListener('pointercancel',()=>{dragging=false;mapMoved=true;mv.classList.remove('dragging')});
+mv.addEventListener('click',e=>{
+  if(e.target.closest('.mapHotspot')||mapMoved)return;
+  const rect=mv.getBoundingClientRect(), px=e.clientX-rect.left, py=e.clientY-rect.top;
+  const localX=(px-mapPanX)/mapZoom, localY=(py-mapPanY)/mapZoom;
+  const img=document.getElementById('mapImage'); if(!img)return;
+  const w=img.clientWidth, h=img.clientHeight;
+  let nearest=null, best=Infinity;
+  XLIGHTS_MAP_MODELS.forEach(m=>{
+    const mx=(m.mapX/1500)*w, my=(m.mapY/700)*h, d=Math.hypot(localX-mx,localY-my);
+    if(d<best){best=d;nearest=m;}
+  });
+  if(nearest && best<=22){
+    openMapDetail(nearest,mapInfoFor(nearest.name));
+  }
+});
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
 mapRender();
