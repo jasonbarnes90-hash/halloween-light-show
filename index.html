@@ -22,8 +22,8 @@
 .mapViewport.dragging{cursor:grabbing}
 .mapStage{position:relative;width:100%;transform-origin:0 0;will-change:transform}
 .mapImage{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
-#mapHotspots{position:absolute;inset:0}
-.mapHotspot{position:absolute;width:14px;height:14px;border:1.5px solid #ff4d4d;border-radius:50%;background:#ff4d4d55;transform:translate(-50%,-50%);cursor:pointer;z-index:3;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66;padding:0}
+#mapHotspots{position:absolute;inset:0;pointer-events:none}
+.mapHotspot{pointer-events:auto;position:absolute;width:14px;height:14px;border:1.5px solid #ff4d4d;border-radius:50%;background:#ff4d4d55;transform:translate(-50%,-50%);cursor:pointer;z-index:3;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66;padding:0}
 .mapHotspot.stage-unstarted{border-color:#ff4d4d;background:#ff4d4d55;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66}.mapHotspot.stage-installed,.mapHotspot.stage-wired{border-color:#ff8a00;background:#ff8a004d;box-shadow:0 0 0 1px #0008,0 0 8px #ff8a0066}.mapHotspot.complete{border-color:#35d07f;background:#35d07f55;box-shadow:0 0 0 1px #0008,0 0 10px #35d07f88}.mapHotspot:hover,.mapHotspot.selected{filter:brightness(1.18);z-index:5}
 .mapLegend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;color:#aeb7c6;font-size:11px;border-top:1px solid #303744}.mapLegend span{display:flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#ff4d4d}.dot.unstarted{background:#ff4d4d}.dot.installed{background:#ff8a00}.dot.done{background:#35d07f}
 .mapHint{padding:0 14px 12px;color:#7f8a9c;font-size:11px}
@@ -1534,9 +1534,9 @@ document.getElementById('mapZoomOut').addEventListener('click',()=>setZoom(mapZo
 document.getElementById('mapZoomReset').addEventListener('click',()=>{mapZoom=1;mapPanX=0;mapPanY=0;mapRender();document.getElementById('mapZoomReset').textContent='100%';});
 const mv=document.getElementById('mapViewport');
 let dragging=false, sx=0, sy=0, spx=0, spy=0;
-mv.addEventListener('pointerdown',e=>{if(mapZoom<=1)return;dragging=true;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
+mv.addEventListener('pointerdown',e=>{if(mapZoom<=1||e.target.closest('.mapHotspot'))return;dragging=true;sx=e.clientX;sy=e.clientY;spx=mapPanX;spy=mapPanY;mv.classList.add('dragging');mv.setPointerCapture(e.pointerId);});
 mv.addEventListener('pointermove',e=>{if(!dragging)return;mapPanX=spx+(e.clientX-sx);mapPanY=spy+(e.clientY-sy);clampPan();applyMapTransform();});
-mv.addEventListener('pointerup',e=>{dragging=false;mv.classList.remove('dragging');try{mv.releasePointerCapture(e.pointerId)}catch{}});
+mv.addEventListener('pointerup',e=>{if(!dragging)return;dragging=false;mv.classList.remove('dragging');try{mv.releasePointerCapture(e.pointerId)}catch{}});
 mv.addEventListener('pointercancel',()=>{dragging=false;mv.classList.remove('dragging')});
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
