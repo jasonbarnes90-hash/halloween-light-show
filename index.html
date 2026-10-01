@@ -1344,20 +1344,93 @@ const DATA={
   ]
 };
 
-// ----- Standalone connection editor beta -----
+// ----- Controller / Chain Editor -----
+const PRE_BETA_RESET_MARKER="halloween-light-show-pre-beta-baseline-v1";
+const PRE_BETA_BASELINE_STATE={
+"fpp-40-pixel-port-14-spider-left-peak":1,
+"fpp-40-pixel-port-13-gothic-gargoyle":1,
+"fpp-40-pixel-port-15-spider-right-peak":1,
+"fpp-projector-virtual-matrix-port-1-projector":1,
+"fpp-40-pixel-port-5-ge-web-corner-left":1,
+"fpp-40-pixel-port-6-ghost-rbl-1":1,
+"fpp-40-pixel-port-6-ghost-rbl-2":2,
+"fpp-40-pixel-port-9-ghost-rbl-3":2,
+"fpp-40-pixel-port-9-ghost-rbl-4":1,
+"fpp-40-pixel-port-10-ge-web-corner-right":1,
+"fpp-40-pixel-port-11-pirate-skull-left":1,
+"fpp-40-pixel-port-11-candy-corn":1,
+"fpp-40-pixel-port-33-skull-wreath":1,
+"fpp-40-pixel-port-33-pirate-skull-right":1,
+"fpp-40-pixel-port-33-candy-corn-2":1,
+"fpp-32-pixel-port-1-mega-tree-str-1":1,
+"fpp-32-pixel-port-2-mega-tree-str-2":1,
+"fpp-32-pixel-port-3-mega-tree-str-3":1,
+"fpp-32-pixel-port-4-mega-tree-str-4":1,
+"fpp-32-pixel-port-5-mega-tree-str-5":1,
+"fpp-32-pixel-port-6-mega-tree-str-6":1,
+"fpp-32-pixel-port-7-mega-tree-str-7":1,
+"fpp-32-pixel-port-8-mega-tree-str-8":1,
+"fpp-32-pixel-port-9-mega-tree-str-9":1,
+"fpp-32-pixel-port-10-mega-tree-str-10":1,
+"fpp-32-pixel-port-11-mega-tree-str-11":1,
+"fpp-32-pixel-port-12-mega-tree-str-12":1,
+"fpp-32-pixel-port-13-mega-tree-str-13":1,
+"fpp-32-pixel-port-14-mega-tree-str-14":1,
+"fpp-32-pixel-port-15-mega-tree-str-15":1,
+"fpp-32-pixel-port-16-mega-tree-str-16":1,
+"fpp-32-pixel-port-17-mega-tree-str-17":1,
+"fpp-32-pixel-port-18-mega-tree-str-18":1,
+"fpp-32-pixel-port-19-mega-tree-str-19":1,
+"fpp-32-pixel-port-20-mega-tree-str-20":1,
+"fpp-32-pixel-port-21-mega-tree-str-21":1,
+"fpp-32-pixel-port-22-mega-tree-str-22":1,
+"fpp-32-pixel-port-23-mega-tree-str-23":1,
+"fpp-32-pixel-port-24-mega-tree-str-24":1,
+"fpp-32-pixel-port-25-boscoyo-black-widow-spider-2":1
+};
+const PRE_BETA_COMPLETED_PROPS={
+"fpp-40-pixel-port-6-ghost-rbl-2":true,
+"fpp-40-pixel-port-9-ghost-rbl-3":true
+};
 const BETA_KEY="halloween-light-show-progress-v2";
+
+// One-time production reset: restore the exact pre-beta progress snapshot and original controller/chain layout.
+if(localStorage.getItem(PRE_BETA_RESET_MARKER)!=="1"){
+  localStorage.setItem(BETA_KEY,JSON.stringify({
+    state:PRE_BETA_BASELINE_STATE,
+    __showTestingComplete:false,
+    __completedProps:PRE_BETA_COMPLETED_PROPS,
+    __connectionOverrides:{}
+  }));
+  localStorage.setItem(PRE_BETA_RESET_MARKER,"1");
+}
 let betaSaved=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
-let betaOverrides=betaSaved.__connectionOverrides||{};
+let betaOverrides={};
 let betaSelectedId="";
 let betaDraft={controller:"",port:"",positionType:"beginning",positionProp:""};
 
 function betaSlug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function betaControllers(){return DATA.controllers.filter(c=>!/wled/i.test(c.name))}
 function betaProps(){
-  return betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))))
-    .sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
+  return betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({
+    controller:c,port:p,model:m,propId:betaSlug(m)
+  })))).sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
 }
-function betaKey(info){return betaSlug(info.controller.name+"-"+info.port.port+"-"+info.model)}
+function betaNormalizeOverrides(raw){
+  const base=betaProps(),out={};
+  Object.entries(raw||{}).forEach(([k,v])=>{
+    const match=base.find(o=>o.propId===k||betaSlug(o.controller.name+"-"+o.port.port+"-"+o.model)===k);
+    if(match&&v&&v.controller&&v.port)out[match.propId]={
+      controller:v.controller,port:v.port,
+      positionType:v.positionType||"beginning",
+      positionProp:v.positionProp||""
+    };
+  });
+  return out;
+}
+betaOverrides=betaNormalizeOverrides(betaSaved.__connectionOverrides||{});
+
+function betaKey(info){return info.propId||betaSlug(info.model)}
 function betaPorts(name){
   if(name==="FPP-40")return Array.from({length:40},(_,i)=>"Pixel Port "+(i+1));
   if(name==="FPP-32")return Array.from({length:32},(_,i)=>"Pixel Port "+(i+1));
@@ -1369,44 +1442,21 @@ function betaOriginal(info){
   return {controller:info.controller.name,port:info.port.port,positionType:idx>0?"after":"beginning",positionProp:idx>0?info.port.models[idx-1]:""};
 }
 function betaEffective(info){return betaOverrides[betaKey(info)]||betaOriginal(info)}
-function betaCandidates(controller,port,id){
-  return betaTopology().props.filter(o=>betaKey(o)!==id&&o.model!=="Mega Tree")
-    .filter(o=>o._controller===controller&&o._port===port).map(o=>o.model)
-    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
-}
-function betaSaveStore(){
-  const latest=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
-  latest.__connectionOverrides=betaOverrides;
-  localStorage.setItem(BETA_KEY,JSON.stringify({
-    state:latest.state||{},
-    __showTestingComplete:Boolean(latest.__showTestingComplete),
-    __completedProps:latest.__completedProps||{},
-    __connectionOverrides:betaOverrides
-  }));
-  betaSaved=latest;
-}
 function betaTopology(){
-  const base=betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m,id:betaKey({controller:c,port:p,model:m})}))));
-  const moved=new Set(Object.keys(betaOverrides));
-  const groups=new Map();
-
-  function gkey(controller,port){return controller+"\u0000"+port}
+  const base=betaProps(),groups=new Map(),moved=new Set(Object.keys(betaOverrides));
+  const gkey=(c,p)=>c+"\u0000"+p;
   base.forEach(o=>{
-    if(moved.has(o.id))return;
+    if(moved.has(o.propId))return;
     const k=gkey(o.controller.name,o.port.port);
     if(!groups.has(k))groups.set(k,{controller:o.controller.name,port:o.port.port,items:[]});
-    groups.get(k).items.push(o);
+    groups.get(k).items.push({...o,_controller:o.controller.name,_port:o.port.port});
   });
-
-  // Insert all moved props using their saved controller/port and position.
-  Object.keys(betaOverrides).forEach(id=>{
-    const info=base.find(o=>o.id===id); if(!info)return;
-    const ov=betaOverrides[id];
+  Object.entries(betaOverrides).forEach(([propId,ov])=>{
+    const info=base.find(o=>o.propId===propId);if(!info)return;
     const k=gkey(ov.controller,ov.port);
     if(!groups.has(k))groups.set(k,{controller:ov.controller,port:ov.port,items:[]});
     const group=groups.get(k);
     const item={...info,_controller:ov.controller,_port:ov.port,_override:true};
-
     if(ov.positionType==="before"&&ov.positionProp){
       const ix=group.items.findIndex(x=>x.model===ov.positionProp);
       if(ix>=0){group.items.splice(ix,0,item);return;}
@@ -1418,108 +1468,102 @@ function betaTopology(){
     if(ov.positionType==="end"){group.items.push(item);return;}
     group.items.unshift(item);
   });
-
-  const result={groups:[...groups.values()],byId:new Map(),props:[]};
-  result.groups.forEach(g=>{
-    g.items.forEach((o,i)=>{
-      o._controller=g.controller;o._port=g.port;o._index=i;
-      result.byId.set(o.id,o);
-      result.props.push(o);
-    });
-  });
-  result.props.sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
-  return result;
+  const byId=new Map(),props=[];
+  for(const g of groups.values()){g.items.forEach((o,i)=>{o._index=i;byId.set(o.propId,o);props.push(o)})}
+  props.sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
+  return {groups:[...groups.values()],byId,props};
+}
+function betaCandidates(controller,port,id){
+  const t=betaTopology();
+  return t.props.filter(o=>o.propId!==id&&o.model!=="Mega Tree"&&o._controller===controller&&o._port===port)
+    .map(o=>o.model).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+}
+function betaSaveStore(){
+  const latest=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
+  const s={
+    state:latest.state||{},
+    __showTestingComplete:Boolean(latest.__showTestingComplete),
+    __completedProps:latest.__completedProps||{},
+    __connectionOverrides:betaOverrides
+  };
+  localStorage.setItem(BETA_KEY,JSON.stringify(s));betaSaved=s;
 }
 function betaDisplayInfo(info){
-  const t=betaTopology();
-  return t.byId.get(betaKey(info))||{...info,_controller:info.controller.name,_port:info.port.port,_index:info.port.models.indexOf(info.model)};
+  const d=betaTopology().byId.get(betaKey(info));
+  return d||{...info,_controller:info.controller.name,_port:info.port.port};
 }
 function betaDisplayChain(info){
-  const t=betaTopology(), d=t.byId.get(betaKey(info));
-  if(!d)return info.model;
-  const group=t.groups.find(g=>g.controller===d._controller&&g.port===d._port);
-  return group&&group.items.length>1?group.items.map(x=>x.model).join(" → "):info.model;
+  const d=betaDisplayInfo(info);
+  const t=betaTopology(),g=t.groups.find(x=>x.controller===d._controller&&x.port===d._port);
+  return g&&g.items.length>1?g.items.map(x=>x.model).join(" → "):info.model;
 }
-function betaDisplayController(info){return betaDisplayInfo(info)._controller}
-function betaDisplayPort(info){return betaDisplayInfo(info)._port}
-
+function betaCurrentConnection(info){
+  const d=betaDisplayInfo(info),chain=betaDisplayChain(info);
+  return d._controller+" • "+d._port+" → "+chain;
+}
 function betaLoadProp(){
-  const props=betaProps(), info=props.find(p=>betaKey(p)===betaSelectedId)||props[0]; if(!info)return;
-  betaSelectedId=betaKey(info);
+  const props=betaProps(),info=props.find(p=>p.propId===betaSelectedId)||props[0];if(!info)return;
+  betaSelectedId=info.propId;
   const e=betaEffective(info);
   betaDraft={controller:e.controller,port:e.port,positionType:e.positionType||"beginning",positionProp:e.positionProp||""};
-  document.getElementById("betaController").value=e.controller;
+  const cm=document.getElementById("betaController");cm.value=e.controller;
   betaLoadPorts();
 }
 function betaLoadPorts(){
   const cm=document.getElementById("betaController"),pm=document.getElementById("betaPort"),pos=document.getElementById("betaPosition");
-  const props=betaProps(),info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
-  const ports=betaPorts(cm.value);
-  pm.innerHTML="";ports.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;pm.appendChild(o)});
+  const info=betaProps().find(p=>p.propId===betaSelectedId)||betaProps()[0];if(!info)return;
+  const ports=betaPorts(cm.value);pm.innerHTML="";
+  ports.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;pm.appendChild(o)});
   pm.value=ports.includes(betaDraft.port)?betaDraft.port:(ports[0]||"");betaDraft.port=pm.value;
   const names=betaCandidates(cm.value,pm.value,betaSelectedId);
   pos.innerHTML="";
   [["beginning","Beginning of port",""],["end","End of port",""]].forEach(([v,t,x])=>{const o=document.createElement("option");o.value=v+"|"+x;o.textContent=t;pos.appendChild(o)});
-  names.forEach(n=>{
-    let o=document.createElement("option");o.value="after|"+n;o.textContent="After: "+n;pos.appendChild(o);
-    o=document.createElement("option");o.value="before|"+n;o.textContent="Before: "+n;pos.appendChild(o);
-  });
+  names.forEach(n=>{let o=document.createElement("option");o.value="after|"+n;o.textContent="After: "+n;pos.appendChild(o);o=document.createElement("option");o.value="before|"+n;o.textContent="Before: "+n;pos.appendChild(o)});
   const wanted=(betaDraft.positionType||"beginning")+"|"+(betaDraft.positionProp||"");
-  const valid=[...pos.options].some(o=>o.value===wanted);pos.value=valid?wanted:"beginning|";
-  const parts=pos.value.split("|");betaDraft.positionType=parts[0];betaDraft.positionProp=parts[1]||"";
+  pos.value=[...pos.options].some(o=>o.value===wanted)?wanted:"beginning|";
+  const z=pos.value.split("|");betaDraft.positionType=z[0];betaDraft.positionProp=z[1]||"";
   betaShow(info);
 }
 function betaShow(info){
-  const orig=betaOriginal(info),changed=Boolean(betaOverrides[betaKey(info)]);
-  const originalChain=info.port.models.length>1?info.port.models.join(" → "):info.model;
-  const currentChain=betaDisplayChain(info);
-  const d=betaDisplayInfo(info);
-  document.getElementById("betaCurrent").innerHTML=
-    "<b>Original xLights connection:</b> "+orig.controller+" • "+orig.port+" → "+originalChain+
-    "<br><span class=\"connectionChanged\">"+(changed?"🟣 ":"")+"Current tracker connection: "+esc(d._controller)+" • "+esc(d._port)+" → "+esc(currentChain)+"</span>";
-  document.getElementById("betaStatus").textContent=changed?"🟣 Saved override for this prop only.":"Editing this prop only. Choose any controller, port, and chain position.";
+  const orig=betaOriginal(info),d=betaDisplayInfo(info),changed=Boolean(betaOverrides[betaKey(info)]),origChain=info.port.models.length>1?info.port.models.join(" → "):info.model;
+  document.getElementById("betaCurrent").innerHTML="<b>Original xLights connection:</b> "+esc(orig.controller)+" • "+esc(orig.port)+" → "+esc(origChain)+
+    "<br><span class=\"connectionChanged\">"+(changed?"🟣 ":"")+"Current tracker connection: "+esc(d._controller)+" • "+esc(d._port)+" → "+esc(betaDisplayChain(info))+"</span>";
+  document.getElementById("betaStatus").textContent=changed?"🟣 Saved override for this prop only.":"Editing this prop only. Controller, port, and chain position are independent.";
 }
 function betaSelectFromMap(id){
-  const ps=document.getElementById("betaProp"); if(!ps)return;
+  const ps=document.getElementById("betaProp");if(!ps)return;
+  const info=betaProps().find(p=>p.propId===id);if(!info)return;
   ps.value=id;betaSelectedId=id;betaLoadProp();
   document.getElementById("betaEditor")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 window.betaSelectFromMap=betaSelectFromMap;
-window.betaTopology=betaTopology;
-window.betaDisplayChain=betaDisplayChain;
-window.betaDisplayInfo=betaDisplayInfo;
 
 document.addEventListener("DOMContentLoaded",()=>{
   const props=betaProps(),ps=document.getElementById("betaProp"),cm=document.getElementById("betaController"),pm=document.getElementById("betaPort"),pos=document.getElementById("betaPosition");
   ps.innerHTML="";
-  props.forEach(p=>{const o=document.createElement("option");o.value=betaKey(p);o.textContent=(betaOverrides[betaKey(p)]?"🟣 ":"")+p.model;ps.appendChild(o)});
-  betaSelectedId=props[0]?betaKey(props[0]):"";
+  props.forEach(p=>{const o=document.createElement("option");o.value=p.propId;o.textContent=(betaOverrides[p.propId]?"🟣 ":"")+p.model;ps.appendChild(o)});
+  betaSelectedId=props[0]?.propId||"";
   cm.innerHTML=betaControllers().map(c=>"<option value=\""+c.name+"\">"+c.name+"</option>").join("");
-
   ps.addEventListener("change",()=>{betaSelectedId=ps.value;betaLoadProp()});
   cm.addEventListener("change",()=>{betaDraft.controller=cm.value;betaDraft.port="";betaDraft.positionType="beginning";betaDraft.positionProp="";betaLoadPorts()});
   pm.addEventListener("change",()=>{betaDraft.port=pm.value;betaDraft.positionType="beginning";betaDraft.positionProp="";betaLoadPorts()});
-  pos.addEventListener("change",()=>{const z=pos.value.split("|");betaDraft.positionType=z[0];betaDraft.positionProp=z[1]||"";const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(info)betaShow(info)});
-
+  pos.addEventListener("change",()=>{const z=pos.value.split("|");betaDraft.positionType=z[0];betaDraft.positionProp=z[1]||"";const info=props.find(p=>p.propId===betaSelectedId)||props[0];if(info)betaShow(info)});
   document.getElementById("betaSave").addEventListener("click",()=>{
-    const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
-    const orig=betaOriginal(info);
-    const same=betaDraft.controller===orig.controller&&betaDraft.port===orig.port&&betaDraft.positionType===orig.positionType&&betaDraft.positionProp===orig.positionProp;
-    if(same)delete betaOverrides[betaKey(info)];
-    else betaOverrides[betaKey(info)]={controller:betaDraft.controller,port:betaDraft.port,positionType:betaDraft.positionType,positionProp:betaDraft.positionProp};
+    const info=props.find(p=>p.propId===betaSelectedId)||props[0];if(!info)return;
+    const orig=betaOriginal(info),same=betaDraft.controller===orig.controller&&betaDraft.port===orig.port&&betaDraft.positionType===orig.positionType&&betaDraft.positionProp===orig.positionProp;
+    if(same)delete betaOverrides[info.propId];else betaOverrides[info.propId]={controller:betaDraft.controller,port:betaDraft.port,positionType:betaDraft.positionType,positionProp:betaDraft.positionProp};
     betaSaveStore();
-    const opt=[...ps.options].find(o=>o.value===betaSelectedId);if(opt)opt.textContent="🟣 "+info.model;
-    betaShow(info); if(typeof render==="function")render(); if(typeof mapRender==="function")mapRender();
-    document.getElementById("betaStatus").textContent="🟣 Saved for "+info.model+" only. Other props and their progress remain intact.";
+    const opt=[...ps.options].find(o=>o.value===betaSelectedId);if(opt)opt.textContent=(betaOverrides[info.propId]?"🟣 ":"")+info.model;
+    if(typeof render==="function")render();if(typeof mapRender==="function")mapRender();betaShow(info);
+    document.getElementById("betaStatus").textContent="🟣 Saved for "+info.model+" only. The old chain and new chain have both been updated.";
   });
-
   document.getElementById("betaRestore").addEventListener("click",()=>{
-    const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
-    delete betaOverrides[betaKey(info)];betaSaveStore();
+    const info=props.find(p=>p.propId===betaSelectedId)||props[0];if(!info)return;
+    delete betaOverrides[info.propId];betaSaveStore();
     const opt=[...ps.options].find(o=>o.value===betaSelectedId);if(opt)opt.textContent=info.model;
     betaLoadProp();if(typeof render==="function")render();if(typeof mapRender==="function")mapRender();
   });
-
+  if(Object.keys(betaOverrides).length!==Object.keys(betaSaved.__connectionOverrides||{}).length)betaSaveStore();
   betaLoadProp();
 });
 
@@ -1548,42 +1592,25 @@ function render(){
  renderTabs();
  const app=document.getElementById("app");
  let total=props.length,installed=0,wired=0,completed=0;
- props.forEach(({controller:c,port:p,model:m})=>{
-   const id=slug(c.name+"-"+p.port+"-"+m),s=stage(id);
-   if(s>=1)installed++;if(s>=2)wired++;if(completedProps[id])completed++;
- });
+ props.forEach(({controller:c,port:p,model:m})=>{const id=slug(c.name+"-"+p.port+"-"+m),s=stage(id);if(s>=1)installed++;if(s>=2)wired++;if(completedProps[id])completed++});
  let pct=total?Math.round((completed/total)*100):0;
- document.getElementById("pct").textContent=pct+"%";
- document.getElementById("fill").style.width=pct+"%";
- document.getElementById("readyBig").textContent=testingComplete?"🎉 SHOW READY":"SHOW SETUP";
- document.getElementById("totalBig").textContent="of "+total+" props";
- document.getElementById("installedStat").textContent="🏠 "+installed+" installed";
- document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
- document.getElementById("testedStat").textContent=testingComplete?"⚡ Testing complete":"⚡ Testing not complete";
- document.getElementById("remainingStat").textContent="👻 "+(total-wired)+" to wire";
+ document.getElementById("pct").textContent=pct+"%";document.getElementById("fill").style.width=pct+"%";
+ document.getElementById("readyBig").textContent=testingComplete?"🎉 SHOW READY":"SHOW SETUP";document.getElementById("totalBig").textContent="of "+total+" props";
+ document.getElementById("installedStat").textContent="🏠 "+installed+" installed";document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
+ document.getElementById("testedStat").textContent=testingComplete?"⚡ Testing complete":"⚡ Testing not complete";document.getElementById("remainingStat").textContent="👻 "+(total-wired)+" to wire";
  const tb=document.getElementById("testComplete");tb.textContent=testingComplete?"✓ SHOW TESTING COMPLETE":"⚡ MARK SHOW TESTING COMPLETE";tb.classList.toggle("complete",testingComplete);
-
- const topo=betaTopology();
- let shownGroups=topo.groups.filter(g=>filter==="ALL"||g.controller===filter);
- let any=false;
- app.innerHTML=shownGroups.map(g=>{
-   const visible=g.items.filter(o=>matchesEffective(g,o));
-   if(!visible.length)return "";
-   any=true;
+ const topo=betaTopology(),shown=topo.groups.filter(g=>filter==="ALL"||g.controller===filter);
+ app.innerHTML=shown.map(g=>{
+   const visible=g.items.filter(o=>!query||(o.model+" "+g.controller+" "+g.port).toLowerCase().includes(query.toLowerCase()));if(!visible.length)return "";
    const ctrl=controllers.find(x=>x.name===g.controller);
-   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(g.controller==="FPP-40"?"🎃":g.controller==="FPP-32"?"🌲":"📽️")+" "+esc(g.controller)+'</div><div class="controllerMeta">DDP '+esc(ctrl?.ip||"")+'</div></div></div>'+
-     '<div class="port"><div class="portHead"><div class="portName">'+esc(g.port)+'</div><div class="chain">🔗 '+g.items.map(o=>esc(o.model)).join(" → ")+'</div></div>'+
-     '<div class="cards">'+visible.map((o,i)=>cardEffective(o,i,g.items)).join("")+'</div></div></section>';
- }).join("") || '<div class="empty">No props match your search.</div>';
+   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(g.controller==="FPP-40"?"🎃":g.controller==="FPP-32"?"🌲":"📽️")+" "+esc(g.controller)+'</div><div class="controllerMeta">DDP '+esc(ctrl?.ip||"")+'</div></div></div><div class="port"><div class="portHead"><div class="portName">'+esc(g.port)+'</div><div class="chain">🔗 '+g.items.map(o=>esc(o.model)).join(" → ")+'</div></div><div class="cards">'+visible.map((o,i)=>cardEffective(o,i,g.items)).join("")+'</div></div></section>';
+ }).join("")||'<div class="empty">No props match your search.</div>';
 }
-function matchesEffective(g,o){return !query||(o.model+" "+g.controller+" "+g.port).toLowerCase().includes(query.toLowerCase())}
 function cardEffective(o,i,items){
- const id=o.id,s=stage(id),isComplete=Boolean(completedProps[id]),changed=Boolean(betaOverrides[id]);
- const prev=i>0?items[i-1].model:"",next=i<items.length-1?items[i+1].model:"";
+ const id=o.id,s=stage(id),done=Boolean(completedProps[id]),changed=Boolean(betaOverrides[o.propId]),prev=i>0?items[i-1].model:"",next=i<items.length-1?items[i+1].model:"";
  const chain=items.length>1?'<div class="chainLine">🔗 <b>Connection:</b> '+(prev?esc(prev)+" → ":"Controller → ")+esc(o.model)+(next?" → "+esc(next):"")+'</div>':"";
- return '<article class="card '+(isComplete?"ready ":"")+(changed?"connectionChangedCard":"")+'"><div class="cardTop"><div><div class="name">'+(o._controller==="FPP-32"?"🌲":o._controller==="FPP-Projector"?"📽️":"👻")+" "+esc(o.model)+'</div><div class="meta">'+esc(o._controller)+' • '+esc(o._port)+(changed?' • 🟣 CHANGED':'')+'</div></div><span class="badge '+(isComplete?"ready":"")+'">'+(isComplete?"🎉 COMPLETE":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><button class="completeProp '+(isComplete?"complete":"")+'" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
+ return '<article class="card '+(done?"ready ":"")+(changed?"connectionChangedCard":"")+'"><div class="cardTop"><div><div class="name">'+(o._controller==="FPP-32"?"🌲":o._controller==="FPP-Projector"?"📽️":"👻")+" "+esc(o.model)+'</div><div class="meta">'+esc(o._controller)+' • '+esc(o._port)+(changed?" • 🟣 CHANGED":"")+'</div></div><span class="badge '+(done?"ready":"")+'">'+(done?"🎉 COMPLETE":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(done||s>j?"done ":"")+(!done&&s===j?"active ":"")+(s===2&&j===2&&!done?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><button class="completeProp '+(done?"complete":"")+'" data-complete-id="'+id+'" '+(s<2&&!done?"disabled":"")+'>'+(done?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><div class="small" style="margin-top:9px">'+(done?"🎃 This prop is complete!":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
 }
-
 function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
 function card(c,p,m,i){
  const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
@@ -1680,11 +1707,12 @@ function megaTreeSetComplete(){
   megaTreeProps.forEach(o=>{const id=slug(o.controller.name+'-'+o.port.port+'-'+o.model);state[id]=2;completedProps[id]=true;});
 }
 function mapInfoFor(name){
-  if(name==='Mega Tree' && megaTreeProps.length){return {__groupId:'mega-tree-group',model:'Mega Tree',controller:megaTreeProps[0].controller,port:megaTreeProps[0].port,groupItems:megaTreeProps};}
-  let found=props.find(o=>o.model===name); if(found)return found;
-  const clean=name.toLowerCase().replace(/[- ]+\d+$/,'').trim();
-  return props.find(o=>o.model.toLowerCase()===clean)||null;
-}function applyMapTransform(){
+ if(name==='Mega Tree'&&megaTreeProps.length)return {__groupId:'mega-tree-group',model:'Mega Tree',controller:megaTreeProps[0].controller,port:megaTreeProps[0].port,groupItems:megaTreeProps};
+ let found=props.find(o=>o.model===name);if(found)return found;
+ const clean=name.toLowerCase().replace(/[- ]+\d+$/,'').trim();
+ return props.find(o=>o.model.toLowerCase()===clean)||null;
+}
+function applyMapTransform(){
   const stage=document.getElementById('mapStage'); if(!stage)return;
   stage.style.transform=`translate(${mapPanX}px,${mapPanY}px) scale(${mapZoom})`;
 }
@@ -1698,7 +1726,7 @@ function mapRender(){
       const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model);
       const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]);
       const s=info.__groupId?megaTreeStage():stage(id);
-      const changed=!info.__groupId&&Boolean(betaOverrides[id]);
+      const changed=!info.__groupId&&Boolean(betaOverrides[betaKey(info)]);
       b.classList.add(done?'complete':changed?'stage-changed':s>=1?'stage-installed':'stage-unstarted');
       if(!done&&!changed&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');
     }
@@ -1716,12 +1744,13 @@ function openMapDetail(m,info){
   }
   if(!info){body.innerHTML='<div class="detailTitle">'+esc(m.name)+'</div><div class="detailMeta">This xLights model is present on the layout, but it is not in the current tracker data.</div>';}
   else{
-    const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model),s=stage(id),done=Boolean(completedProps[id]),d=betaDisplayInfo(info),chain=betaDisplayChain(info),orig=betaOriginal(info),changed=Boolean(betaOverrides[id]);
+    const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model),s=stage(id),done=Boolean(completedProps[id]),d=betaDisplayInfo(info),chain=betaDisplayChain(info),orig=betaOriginal(info),changed=Boolean(betaOverrides[betaKey(info)]);
     body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div>'+
       '<div class="detailMeta">Exact xLights layout position • '+esc(d._controller)+(changed?' • <span class="connectionChanged">🟣 CONNECTION CHANGED</span>':'')+'</div>'+
       '<div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(d._controller)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(d._port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc((controllers.find(x=>x.name===d._controller)?.ip)||info.controller.ip||"")+'</span></div><div class="detailBox"><b>Current Chain</b><span>'+esc(chain)+'</span></div><div class="detailBox"><b>Original xLights Connection</b><span>'+esc(orig.controller)+' • '+esc(orig.port)+' → '+esc(info.port.models.length>1?info.port.models.join(" → "):info.model)+'</span></div></div>'+
       '<div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div>'+
-      '<button type="button" class="megaAction" style="margin-top:12px" onclick="betaSelectFromMap(\''+esc(id)+'\')">✎ EDIT THIS PROP CONNECTION</button>';
+      '<button type="button" class="megaAction" style="margin-top:12px" onclick="betaSelectFromMap(\''+esc(betaKey(info))+'\')">✎ EDIT THIS PROP CONNECTION</button>';
+
   }
   modal.classList.add("open");
 }
