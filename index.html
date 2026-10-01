@@ -1345,65 +1345,7 @@ const DATA={
 };
 
 // ----- Controller / Chain Editor -----
-const PRE_BETA_RESET_MARKER="halloween-light-show-pre-beta-baseline-v1";
-const PRE_BETA_BASELINE_STATE={
-"fpp-40-pixel-port-14-spider-left-peak":1,
-"fpp-40-pixel-port-13-gothic-gargoyle":1,
-"fpp-40-pixel-port-15-spider-right-peak":1,
-"fpp-projector-virtual-matrix-port-1-projector":1,
-"fpp-40-pixel-port-5-ge-web-corner-left":1,
-"fpp-40-pixel-port-6-ghost-rbl-1":1,
-"fpp-40-pixel-port-6-ghost-rbl-2":2,
-"fpp-40-pixel-port-9-ghost-rbl-3":2,
-"fpp-40-pixel-port-9-ghost-rbl-4":1,
-"fpp-40-pixel-port-10-ge-web-corner-right":1,
-"fpp-40-pixel-port-11-pirate-skull-left":1,
-"fpp-40-pixel-port-11-candy-corn":1,
-"fpp-40-pixel-port-33-skull-wreath":1,
-"fpp-40-pixel-port-33-pirate-skull-right":1,
-"fpp-40-pixel-port-33-candy-corn-2":1,
-"fpp-32-pixel-port-1-mega-tree-str-1":1,
-"fpp-32-pixel-port-2-mega-tree-str-2":1,
-"fpp-32-pixel-port-3-mega-tree-str-3":1,
-"fpp-32-pixel-port-4-mega-tree-str-4":1,
-"fpp-32-pixel-port-5-mega-tree-str-5":1,
-"fpp-32-pixel-port-6-mega-tree-str-6":1,
-"fpp-32-pixel-port-7-mega-tree-str-7":1,
-"fpp-32-pixel-port-8-mega-tree-str-8":1,
-"fpp-32-pixel-port-9-mega-tree-str-9":1,
-"fpp-32-pixel-port-10-mega-tree-str-10":1,
-"fpp-32-pixel-port-11-mega-tree-str-11":1,
-"fpp-32-pixel-port-12-mega-tree-str-12":1,
-"fpp-32-pixel-port-13-mega-tree-str-13":1,
-"fpp-32-pixel-port-14-mega-tree-str-14":1,
-"fpp-32-pixel-port-15-mega-tree-str-15":1,
-"fpp-32-pixel-port-16-mega-tree-str-16":1,
-"fpp-32-pixel-port-17-mega-tree-str-17":1,
-"fpp-32-pixel-port-18-mega-tree-str-18":1,
-"fpp-32-pixel-port-19-mega-tree-str-19":1,
-"fpp-32-pixel-port-20-mega-tree-str-20":1,
-"fpp-32-pixel-port-21-mega-tree-str-21":1,
-"fpp-32-pixel-port-22-mega-tree-str-22":1,
-"fpp-32-pixel-port-23-mega-tree-str-23":1,
-"fpp-32-pixel-port-24-mega-tree-str-24":1,
-"fpp-32-pixel-port-25-boscoyo-black-widow-spider-2":1
-};
-const PRE_BETA_COMPLETED_PROPS={
-"fpp-40-pixel-port-6-ghost-rbl-2":true,
-"fpp-40-pixel-port-9-ghost-rbl-3":true
-};
-const BETA_KEY="halloween-light-show-progress-v2";
-
-// One-time production reset: restore the exact pre-beta progress snapshot and original controller/chain layout.
-if(localStorage.getItem(PRE_BETA_RESET_MARKER)!=="1"){
-  localStorage.setItem(BETA_KEY,JSON.stringify({
-    state:PRE_BETA_BASELINE_STATE,
-    __showTestingComplete:false,
-    __completedProps:PRE_BETA_COMPLETED_PROPS,
-    __connectionOverrides:{}
-  }));
-  localStorage.setItem(PRE_BETA_RESET_MARKER,"1");
-}
+const PRE_BETA_KEY="halloween-light-show-pre-beta-baseline-v1";const PRE_BETA_STATE={"fpp-40-pixel-port-14-spider-left-peak":1,"fpp-40-pixel-port-13-gothic-gargoyle":1,"fpp-40-pixel-port-15-spider-right-peak":1,"fpp-projector-virtual-matrix-port-1-projector":1,"fpp-40-pixel-port-5-ge-web-corner-left":1,"fpp-40-pixel-port-6-ghost-rbl-1":1,"fpp-40-pixel-port-6-ghost-rbl-2":2,"fpp-40-pixel-port-9-ghost-rbl-3":2,"fpp-40-pixel-port-9-ghost-rbl-4":1,"fpp-40-pixel-port-10-ge-web-corner-right":1,"fpp-40-pixel-port-11-pirate-skull-left":1,"fpp-40-pixel-port-11-candy-corn":1,"fpp-40-pixel-port-33-skull-wreath":1,"fpp-40-pixel-port-33-pirate-skull-right":1,"fpp-40-pixel-port-33-candy-corn-2":1,"fpp-32-pixel-port-1-mega-tree-str-1":1,"fpp-32-pixel-port-2-mega-tree-str-2":1,"fpp-32-pixel-port-3-mega-tree-str-3":1,"fpp-32-pixel-port-4-mega-tree-str-4":1,"fpp-32-pixel-port-5-mega-tree-str-5":1,"fpp-32-pixel-port-6-mega-tree-str-6":1,"fpp-32-pixel-port-7-mega-tree-str-7":1,"fpp-32-pixel-port-8-mega-tree-str-8":1,"fpp-32-pixel-port-9-mega-tree-str-9":1,"fpp-32-pixel-port-10-mega-tree-str-10":1,"fpp-32-pixel-port-11-mega-tree-str-11":1,"fpp-32-pixel-port-12-mega-tree-str-12":1,"fpp-32-pixel-port-13-mega-tree-str-13":1,"fpp-32-pixel-port-14-mega-tree-str-14":1,"fpp-32-pixel-port-15-mega-tree-str-15":1,"fpp-32-pixel-port-16-mega-tree-str-16":1,"fpp-32-pixel-port-17-mega-tree-str-17":1,"fpp-32-pixel-port-18-mega-tree-str-18":1,"fpp-32-pixel-port-19-mega-tree-str-19":1,"fpp-32-pixel-port-20-mega-tree-str-20":1,"fpp-32-pixel-port-21-mega-tree-str-21":1,"fpp-32-pixel-port-22-mega-tree-str-22":1,"fpp-32-pixel-port-23-mega-tree-str-23":1,"fpp-32-pixel-port-24-mega-tree-str-24":1,"fpp-32-pixel-port-25-boscoyo-black-widow-spider-2":1};const PRE_BETA_DONE={"fpp-40-pixel-port-6-ghost-rbl-2":true,"fpp-40-pixel-port-9-ghost-rbl-3":true};const BETA_KEY="halloween-light-show-progress-v2";if(localStorage.getItem(PRE_BETA_KEY)!=="1"){localStorage.setItem(BETA_KEY,JSON.stringify({state:PRE_BETA_STATE,__showTestingComplete:false,__completedProps:PRE_BETA_DONE,__connectionOverrides:{}}));localStorage.setItem(PRE_BETA_KEY,"1");}
 let betaSaved=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
 let betaOverrides={};
 let betaSelectedId="";
