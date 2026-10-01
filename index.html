@@ -63,13 +63,13 @@
   <div class="mapDialog" style="max-width:560px">
     <button class="mapClose" id="connectionClose">×</button>
     <div class="detailBody">
-      <div class="detailTitle">Edit Controller Connection</div>
+      <div class="detailTitle" id="connectionModalTitle">Edit Controller Connection</div>
       <div class="detailMeta" id="connectionPropName"></div>
       <div class="detailGrid" style="margin-top:18px">
         <div class="detailBox"><b>Controller</b><select id="editController" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
         <div class="detailBox"><b>Port</b><select id="editPort" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
       </div>
-      <div class="small" style="margin-top:12px">Saving a changed connection marks this prop purple until it is complete. When this prop is part of a chain, the controller/port setting belongs to the first prop in that chain, so the change applies to the entire chain.</div>
+      <div class="small" style="margin-top:12px">For a chained prop, the controller/port belongs to the first prop in the chain. Saving here changes the <b>entire chain connection</b> and marks the chain purple until the affected props are complete.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
         <button type="button" class="megaAction" id="connectionCancel">CANCEL</button>
         <button type="button" class="megaAction complete" id="connectionSave">SAVE CONNECTION</button>
@@ -1368,7 +1368,7 @@ function chainFor(info){
 function chainDisplay(info,id){
   const ch=chainFor(info), conn=connectionFor(info,id);
   const chainText=ch.models.join(" → ");
-  if(ch.isChained) return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(chainText);
+  if(ch.isChained) return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(ch.rootModel)+" → "+(ch.models.length>1?esc(ch.models.slice(1).join(" → ")):"");
   return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(info.model);
 }
 function connectionKey(info){
@@ -1404,13 +1404,17 @@ function openConnectionEditor(info){
   editingConnectionMembers=ch.models.map(model=>props.find(o=>o.controller===info.controller&&o.port===info.port&&o.model===model)).filter(Boolean);
   if(!editingConnectionMembers.length)editingConnectionMembers=[info];
   const effective=connectionFor(info,editingConnectionId);
-  const cm=document.getElementById("editController"), pm=document.getElementById("editPort"), nm=document.getElementById("connectionPropName");
+  const root=editingConnectionMembers[0]||info;
+  const cm=document.getElementById("editController"), pm=document.getElementById("editPort"), nm=document.getElementById("connectionPropName"), mt=document.getElementById("connectionModalTitle");
   cm.innerHTML=EFFECTIVE_CONTROLLERS.map(c=>'<option value="'+esc(c.name)+'">'+esc(c.name)+'</option>').join("");
   cm.value=effective.controller;
   function refreshPorts(){const ports=controllerPorts(cm.value);pm.innerHTML=ports.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join(""); if(!ports.includes(effective.port))pm.value=ports[0]||""; else pm.value=effective.port;}
   cm.onchange=()=>refreshPorts();
   refreshPorts();
-  nm.textContent="Prop: "+info.model+(ch.models.length>1?" • Chain: "+ch.models.join(" → "):"");
+  mt.textContent=ch.isChained?"Edit Chain Controller Connection":"Edit Controller Connection";
+  nm.innerHTML=ch.isChained
+    ? "Chain root: <b>"+esc(root.model)+"</b><br><span style=\"font-size:12px\">"+esc(ch.models.join(" → "))+"</span>"
+    : "Prop: "+esc(info.model);
   document.getElementById("connectionModal").classList.add("open");
 }
 function closeConnectionEditor(){editingConnectionId=null;editingConnectionMembers=[];document.getElementById("connectionModal").classList.remove("open");}
