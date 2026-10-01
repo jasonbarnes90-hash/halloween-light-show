@@ -46,12 +46,13 @@
 <div class="tabs" id="tabs"></div>
 <section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222">
   <div style="font-weight:900;font-size:18px">🧪 Controller / Chain Editor — Beta</div>
-  <div class="small" style="margin-top:4px">This test editor changes only the selected prop's saved tracker connection. It does not change your working map or your xLights layout.</div>
+  <div class="small" style="margin-top:4px">This test editor gives the selected prop full controller/port/chain control. Changes are saved for that prop only; your working Home Screen tracker and xLights layout are not changed.</div>
   <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
     <div class="detailBox" style="grid-column:1/-1"><b>Prop</b><select id="betaProp" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
     <div class="detailBox"><b>Controller</b><select id="betaController" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
     <div class="detailBox"><b>Port</b><select id="betaPort" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
-    <div class="detailBox" style="grid-column:1/-1"><b>Chain After</b><select id="betaAfter" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
+    <div class="detailBox"><b>Chain After</b><select id="betaAfter" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
+    <div class="detailBox"><b>Chain Before</b><select id="betaBefore" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
   </div>
   <div id="betaCurrent" class="chainLine" style="margin-top:10px"></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
@@ -1344,54 +1345,209 @@ const DATA={
 const BETA_KEY="halloween-light-show-progress-v2";
 let betaSaved=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
 let betaOverrides=betaSaved.__connectionOverrides||{};
+
 function betaSlug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function betaControllers(){return DATA.controllers.filter(c=>!/wled/i.test(c.name));}
-function betaProps(){return betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))));}
-function betaKey(info){return betaSlug(info.controller.name+"-"+info.port.port+"-"+info.model)}
-function betaPorts(name){if(name==="FPP-40")return Array.from({length:40},(_,i)=>"Pixel Port "+(i+1));if(name==="FPP-32")return Array.from({length:32},(_,i)=>"Pixel Port "+(i+1));if(/projector/i.test(name))return ["Virtual Matrix Port 1"];const c=betaControllers().find(x=>x.name===name);return c?c.ports.map(p=>p.port):[]}
-function betaOriginal(info){const idx=info.port.models.indexOf(info.model);return {controller:info.controller.name,port:info.port.port,after:idx>0?info.port.models[idx-1]:""}}
-function betaEffective(info){return betaOverrides[betaKey(info)]||betaOriginal(info)}
-function betaCandidates(controller,port,id){return betaProps().filter(o=>betaKey(o)!==id&&o.controller.name===controller&&o.port.port===port&&o.model!=="Mega Tree").map(o=>o.model)}
-function betaSaveStore(){const s={state:betaSaved.state||{},__showTestingComplete:Boolean(betaSaved.__showTestingComplete),__completedProps:betaSaved.__completedProps||{},__connectionOverrides:betaOverrides};localStorage.setItem(BETA_KEY,JSON.stringify(s));betaSaved=s}
-function betaRenderSelects(){
- const props=betaProps(), ps=document.getElementById("betaProp"),cm=document.getElementById("betaController"),pm=document.getElementById("betaPort"),am=document.getElementById("betaAfter");
- const old=ps.value;
- ps.innerHTML=props.map(p=>'<option value="'+betaKey(p)+'">'+p.model+'</option>').join("");
- if(old&&props.some(p=>betaKey(p)===old))ps.value=old;
- cm.innerHTML=betaControllers().map(c=>'<option value="'+c.name+'">'+c.name+'</option>').join("");
- function selected(){return props.find(p=>betaKey(p)===ps.value)||props[0]}
- function refresh(){
-   const info=selected(); if(!info)return;
-   const e=betaEffective(info);
-   cm.value=e.controller;
-   const ports=betaPorts(e.controller);pm.innerHTML=ports.map(p=>'<option value="'+p+'">'+p+'</option>').join("");pm.value=ports.includes(e.port)?e.port:(ports[0]||"");
-   const names=betaCandidates(cm.value,pm.value,betaKey(info));
-   am.innerHTML='<option value="">Beginning of port / no prop before it</option>'+names.map(n=>'<option value="'+n+'">'+n+'</option>').join("");
-   am.value=names.includes(e.after)?e.after:"";
-   const orig=betaOriginal(info),changed=Boolean(betaOverrides[betaKey(info)]);
-   const chain=info.port.models.length>1?info.port.models.join(" → "):info.model;
-   document.getElementById("betaCurrent").innerHTML='<b>Original xLights connection:</b> '+orig.controller+' • '+orig.port+' → '+chain+(changed?'<br><span class="connectionChanged">🟣 Tracker override: '+e.controller+' • '+e.port+(e.after?' → '+e.after+' → ':' → ')+info.model+'</span>':"");
-   document.getElementById("betaStatus").textContent=changed?"Purple override is saved for this prop only.":"No override saved for this prop.";
- }
- ps.onchange=refresh;cm.onchange=()=>{const ports=betaPorts(cm.value);pm.innerHTML=ports.map(p=>'<option value="'+p+'">'+p+'</option>').join("");pm.value=ports[0]||"";const names=betaCandidates(cm.value,pm.value,betaKey(selected()));am.innerHTML='<option value="">Beginning of port / no prop before it</option>'+names.map(n=>'<option value="'+n+'">'+n+'</option>').join("");am.value="";refresh()};
- pm.onchange=refresh;am.onchange=refresh;refresh();
+function betaProps(){
+  return betaControllers()
+    .flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))))
+    .sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
 }
+function betaKey(info){return betaSlug(info.controller.name+"-"+info.port.port+"-"+info.model)}
+function betaPorts(name){
+  if(name==="FPP-40")return Array.from({length:40},(_,i)=>"Pixel Port "+(i+1));
+  if(name==="FPP-32")return Array.from({length:32},(_,i)=>"Pixel Port "+(i+1));
+  if(/projector/i.test(name))return ["Virtual Matrix Port 1"];
+  const c=betaControllers().find(x=>x.name===name);
+  return c?c.ports.map(p=>p.port):[];
+}
+function betaOriginal(info){
+  const idx=info.port.models.indexOf(info.model);
+  return {controller:info.controller.name,port:info.port.port,after:idx>0?info.port.models[idx-1]:"",before:idx>=0&&idx<info.port.models.length-1?info.port.models[idx+1]:""};
+}
+function betaEffective(info){return betaOverrides[betaKey(info)]||betaOriginal(info)}
+function betaCurrentId(info){return betaKey(info)}
+function betaEffectiveCandidates(controller,port,id){
+  return betaProps()
+    .filter(o=>betaCurrentId(o)!==id && o.model!=="Mega Tree")
+    .filter(o=>{
+      const e=betaEffective(o);
+      return e.controller===controller && e.port===port;
+    })
+    .map(o=>o.model)
+    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+}
+function betaSaveStore(){
+  const s={
+    state:betaSaved.state||{},
+    __showTestingComplete:Boolean(betaSaved.__showTestingComplete),
+    __completedProps:betaSaved.__completedProps||{},
+    __connectionOverrides:betaOverrides
+  };
+  localStorage.setItem(BETA_KEY,JSON.stringify(s));
+  betaSaved=s;
+}
+let betaDraft={controller:"",port:"",after:"",before:""};
+
+function betaRenderSelects(preserveDraft=true){
+  const props=betaProps();
+  const ps=document.getElementById("betaProp");
+  const cm=document.getElementById("betaController");
+  const pm=document.getElementById("betaPort");
+  const after=document.getElementById("betaAfter");
+  const before=document.getElementById("betaBefore");
+
+  const oldProp=ps.value;
+  ps.innerHTML=props.map(p=>{
+    const id=betaKey(p), changed=Boolean(betaOverrides[id]);
+    return '<option value="'+id+'"'+(changed?' data-changed="1"':'')+'>'+ (changed?'🟣 ':'') + p.model +'</option>';
+  }).join("");
+  if(oldProp && props.some(p=>betaKey(p)===oldProp)) ps.value=oldProp;
+  else if(props[0]) ps.value=betaKey(props[0]);
+
+  cm.innerHTML=betaControllers().map(c=>'<option value="'+c.name+'">'+c.name+'</option>').join("");
+
+  function selected(){
+    return props.find(p=>betaKey(p)===ps.value)||props[0];
+  }
+  function renderDraft(){
+    const info=selected();
+    if(!info)return;
+
+    const current=betaEffective(info);
+    const useDraft=preserveDraft && betaDraft.controller && betaDraft.port;
+    const e=useDraft?betaDraft:current;
+
+    if(!betaDraft.controller) betaDraft={controller:current.controller,port:current.port,after:current.after||"",before:current.before||""};
+    const controller=e.controller;
+    const port=e.port;
+
+    cm.value=controller;
+    const ports=betaPorts(controller);
+    pm.innerHTML=ports.map(p=>'<option value="'+p+'">'+p+'</option>').join("");
+    pm.value=ports.includes(port)?port:(ports[0]||"");
+
+    const names=betaEffectiveCandidates(cm.value,pm.value,betaKey(info));
+    after.innerHTML='<option value="">No prop before it / beginning of port</option>'+names.map(n=>'<option value="'+n+'">'+n+'</option>').join("");
+    before.innerHTML='<option value="">No prop after it / end of port</option>'+names.map(n=>'<option value="'+n+'">'+n+'</option>').join("");
+
+    after.value=names.includes(e.after)?e.after:"";
+    before.value=names.includes(e.before)?e.before:"";
+
+    const orig=betaOriginal(info);
+    const changed=Boolean(betaOverrides[betaKey(info)]);
+    const originalChain=info.port.models.length>1?info.port.models.join(" → "):info.model;
+    let currentText=info.model;
+    if(e.after)currentText=e.after+" → "+currentText;
+    if(e.before)currentText=currentText+" → "+e.before;
+
+    document.getElementById("betaCurrent").innerHTML=
+      '<b>Original xLights connection:</b> '+orig.controller+' • '+orig.port+
+      ' → '+originalChain+
+      (changed||useDraft
+        ? '<br><span class="connectionChanged">🟣 Current editor connection: '+e.controller+' • '+e.port+' • '+currentText+'</span>'
+        : '');
+
+    document.getElementById("betaStatus").textContent=
+      changed
+        ? "🟣 Saved override. It applies to this prop only."
+        : "No saved override. You can freely choose a different controller, port, and chain position.";
+  }
+
+  function loadSelected(){
+    const info=selected();
+    if(!info)return;
+    const current=betaEffective(info);
+    betaDraft={controller:current.controller,port:current.port,after:current.after||"",before:current.before||""};
+    renderDraft();
+  }
+
+  ps.onchange=loadSelected;
+
+  cm.onchange=()=>{
+    betaDraft.controller=cm.value;
+    const ports=betaPorts(cm.value);
+    betaDraft.port=ports[0]||"";
+    betaDraft.after="";
+    betaDraft.before="";
+    renderDraft();
+  };
+
+  pm.onchange=()=>{
+    betaDraft.port=pm.value;
+    betaDraft.after="";
+    betaDraft.before="";
+    renderDraft();
+  };
+
+  after.onchange=()=>{
+    betaDraft.after=after.value||"";
+    if(betaDraft.after)betaDraft.before="";
+    renderDraft();
+  };
+
+  before.onchange=()=>{
+    betaDraft.before=before.value||"";
+    if(betaDraft.before)betaDraft.after="";
+    renderDraft();
+  };
+
+  loadSelected();
+}
+
 document.addEventListener("DOMContentLoaded",()=>{
- betaRenderSelects();
- document.getElementById("betaSave").addEventListener("click",()=>{
-   const info=betaProps().find(p=>betaKey(p)===document.getElementById("betaProp").value);if(!info)return;
-   const next={controller:document.getElementById("betaController").value,port:document.getElementById("betaPort").value,after:document.getElementById("betaAfter").value||""};
-   const orig=betaOriginal(info);
-   if(next.controller===orig.controller&&next.port===orig.port&&next.after===orig.after)delete betaOverrides[betaKey(info)];else betaOverrides[betaKey(info)]=next;
-   betaSaved.__connectionOverrides=betaOverrides;betaSaveStore();
-   const c=document.getElementById("betaStatus");c.textContent="🟣 Saved for "+info.model+" only. Existing tracker progress was not changed.";betaRenderSelects();
- });
- document.getElementById("betaRestore").addEventListener("click",()=>{
-   const info=betaProps().find(p=>betaKey(p)===document.getElementById("betaProp").value);if(!info)return;
-   delete betaOverrides[betaKey(info)];betaSaved.__connectionOverrides=betaOverrides;betaSaveStore();betaRenderSelects();
-   document.getElementById("betaStatus").textContent="Original connection restored for "+info.model+".";
- });
+  betaRenderSelects(false);
+
+  document.getElementById("betaSave").addEventListener("click",()=>{
+    const props=betaProps();
+    const info=props.find(p=>betaKey(p)===document.getElementById("betaProp").value);
+    if(!info)return;
+
+    const next={
+      controller:betaDraft.controller||document.getElementById("betaController").value,
+      port:betaDraft.port||document.getElementById("betaPort").value,
+      after:betaDraft.after||"",
+      before:betaDraft.before||""
+    };
+
+    const orig=betaOriginal(info);
+    if(
+      next.controller===orig.controller &&
+      next.port===orig.port &&
+      next.after===orig.after &&
+      next.before===orig.before
+    ){
+      delete betaOverrides[betaKey(info)];
+    }else{
+      betaOverrides[betaKey(info)]=next;
+    }
+
+    betaSaved.__connectionOverrides=betaOverrides;
+    betaSaveStore();
+
+    betaDraft={controller:next.controller,port:next.port,after:next.after,before:next.before};
+    betaRenderSelects(true);
+
+    const c=document.getElementById("betaStatus");
+    c.textContent="🟣 Saved for "+info.model+" only. Existing installation/wiring progress was not changed.";
+  });
+
+  document.getElementById("betaRestore").addEventListener("click",()=>{
+    const id=document.getElementById("betaProp").value;
+    const info=betaProps().find(p=>betaKey(p)===id);
+    if(!info)return;
+
+    delete betaOverrides[id];
+    betaSaved.__connectionOverrides=betaOverrides;
+    betaSaveStore();
+
+    const current=betaOriginal(info);
+    betaDraft={controller:current.controller,port:current.port,after:current.after||"",before:current.before||""};
+    betaRenderSelects(true);
+    document.getElementById("betaStatus").textContent="Original connection restored for "+info.model+".";
+  });
 });
+
 const stages=["UNSTARTED","INSTALLED","WIRED"];
 const icons=["⬜","🏠","🔌"];
 const key="halloween-light-show-progress-v2";
