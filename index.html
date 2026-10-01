@@ -69,7 +69,7 @@
         <div class="detailBox"><b>Controller</b><select id="editController" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
         <div class="detailBox"><b>Port</b><select id="editPort" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
       </div>
-      <div class="small" style="margin-top:12px">Saving a changed connection marks this prop purple until you mark it complete. For chained props, the controller/port change applies to the entire chain.</div>
+      <div class="small" style="margin-top:12px">Saving a changed connection marks this prop purple until it is complete. When this prop is part of a chain, the controller/port setting belongs to the first prop in that chain, so the change applies to the entire chain.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
         <button type="button" class="megaAction" id="connectionCancel">CANCEL</button>
         <button type="button" class="megaAction complete" id="connectionSave">SAVE CONNECTION</button>
@@ -1362,10 +1362,14 @@ function originalConnection(info){return {controller:info.controller.name,port:i
 function chainFor(info){
   const models=info?.port?.models||[];
   const index=models.indexOf(info?.model);
-  if(models.length>1 && index>0){
-    return {models,index,rootModel:models[0]};
-  }
-  return {models:models.length?models:[info?.model],index:Math.max(index,0),rootModel:info?.model};
+  const isChained=models.length>1;
+  return {models:models.length?models:[info?.model],index:Math.max(index,0),rootModel:models.length?models[0]:info?.model,isChained};
+}
+function chainDisplay(info,id){
+  const ch=chainFor(info), conn=connectionFor(info,id);
+  const chainText=ch.models.join(" → ");
+  if(ch.isChained) return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(chainText);
+  return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(info.model);
 }
 function connectionKey(info){
   const ch=chainFor(info);
@@ -1455,9 +1459,10 @@ function render(){
 function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
 function card(c,p,m,i){
  const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
- const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Connection:</b> '+(i===0?"Controller → "+esc(m):esc(p.models[i-1])+" → "+esc(m))+(i<p.models.length-1?" → "+esc(p.models[i+1]):"")+"</div>" : "";
  const isComplete=Boolean(completedProps[id]), changed=isConnectionChanged(id), conn=connectionFor({controller:c,port:p,model:m},id);
- return '<article class="card '+(isComplete?"ready ":changed?"changed ":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(conn.controller)+' • '+esc(conn.port)+(changed?' <span class="connectionChanged">• CONNECTION CHANGED</span>':'')+'</div></div><span class="badge '+(isComplete?"ready":changed?"changed":"")+'">'+(isComplete?"🎉 COMPLETE":changed?"🟣 CHANGED":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><div style="display:flex;gap:8px;margin-top:9px"><button class="completeProp '+(isComplete?"complete":"")+'" style="margin-top:0;flex:1" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><button type="button" class="megaAction" style="flex:0 0 auto" data-edit-connection="'+id+'" onclick="editConnectionById(this.dataset.editConnection);return false;">✎ EDIT CONNECTION</button></div><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":changed?"🟣 Connection changed — complete this prop when the new setup is finished.":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
+ const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Chain:</b> '+chainDisplay({controller:c,port:p,model:m},id)+'</div>' : '<div class="chainLine">🔌 <b>Connection:</b> '+esc(conn.controller)+' • '+esc(conn.port)+'</div>';
+ const editLabel=p.models.length>1?"✎ EDIT CHAIN CONNECTION":"✎ EDIT CONNECTION";
+ return '<article class="card '+(isComplete?"ready ":changed?"changed ":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(conn.controller)+' • '+esc(conn.port)+(changed?' <span class="connectionChanged">• CONNECTION CHANGED</span>':'')+'</div></div><span class="badge '+(isComplete?"ready":changed?"changed":"")+'">'+(isComplete?"🎉 COMPLETE":changed?"🟣 CHANGED":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><div style="display:flex;gap:8px;margin-top:9px"><button class="completeProp '+(isComplete?"complete":"")+'" style="margin-top:0;flex:1" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><button type="button" class="megaAction" style="flex:0 0 auto" data-edit-connection="'+id+'" onclick="editConnectionById(this.dataset.editConnection);return false;">'+editLabel+'</button></div><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":changed?"🟣 Connection changed — complete this "+(p.models.length>1?"chain":"prop")+" when the new setup is finished.":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
 }
 function slug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
@@ -1587,9 +1592,10 @@ function openMapDetail(m,info){
   }  if(!info){body.innerHTML='<div class="detailTitle">'+esc(m.name)+'</div><div class="detailMeta">This xLights model is present on the layout, but it is not in the current tracker data.</div>';}
   else{
     const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model), s=stage(id), done=Boolean(completedProps[id]);
-    const chain=info.port.models.length>1?info.port.models.join(" → "):info.model;
-    const conn=connectionFor(info,id), changed=isConnectionChanged(id);
-    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div><div class="detailMeta">Exact xLights layout position • '+esc(conn.controller)+(changed?' • <span class="connectionChanged">CONNECTION CHANGED</span>':'')+'</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(conn.controller)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(conn.port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc(info.controller.ip||"")+'</span></div><div class="detailBox"><b>Original</b><span>'+esc(info.controller.name)+' • '+esc(info.port.port)+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><button type="button" class="megaAction" style="margin-top:12px" data-edit-connection="'+esc(id)+'" onclick="editConnectionById(this.dataset.editConnection);return false;">✎ EDIT CONTROLLER CONNECTION</button><div class="small" style="margin-top:10px">Click a step above to update this prop.</div>';
+    const ch=chainFor(info), conn=connectionFor(info,id), changed=isConnectionChanged(id);
+    const chain=ch.isChained?ch.models.join(" → "):info.model;
+    const chainLabel=ch.isChained?"🔗 "+esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(chain):"🔌 "+esc(conn.controller)+" • "+esc(conn.port);
+    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div><div class="detailMeta">Exact xLights layout position • '+esc(conn.controller)+(changed?' • <span class="connectionChanged">CONNECTION CHANGED</span>':'')+'</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(conn.controller)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(conn.port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc(info.controller.ip||"")+'</span></div><div class="detailBox"><b>'+ (ch.isChained?"Chain":"Connection") +'</b><span>'+chainLabel+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><button type="button" class="megaAction" style="margin-top:12px" data-edit-connection="'+esc(id)+'" onclick="editConnectionById(this.dataset.editConnection);return false;">✎ EDIT CONTROLLER CONNECTION</button><div class="small" style="margin-top:10px">Click a step above to update this prop.</div>';
   }
   modal.classList.add("open");
 }
