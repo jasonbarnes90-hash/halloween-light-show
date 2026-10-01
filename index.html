@@ -30,6 +30,11 @@
 .mapModal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:100}.mapModal.open{display:flex}.mapDialog{width:min(900px,100%);max-height:92vh;overflow:auto;background:#12161d;border:1px solid #394150;border-radius:20px;box-shadow:0 25px 80px #000;position:relative}.mapClose{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:50%;border:1px solid #46505f;background:#202733;color:#fff;font-size:20px;cursor:pointer;z-index:2}
 .detailImageWrap{background:#000;position:relative;overflow:hidden}.detailImage{display:block;width:100%;height:auto}.detailFocus{position:absolute;border:3px solid #35d07f;border-radius:10px;box-shadow:0 0 0 9999px #0004,0 0 30px #35d07f99;pointer-events:none}.detailBody{padding:18px}.detailTitle{font-size:23px;font-weight:950}.detailMeta{color:#aeb7c6;margin-top:5px}.detailGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.detailBox{background:#0d1117;border:1px solid #2e3541;border-radius:12px;padding:11px}.detailBox b{display:block;color:#7f8a9c;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}.detailBox span{font-weight:850}.detailSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}.detailStep{padding:10px 5px;border:1px solid #343c49;border-radius:10px;text-align:center;background:#1b2029;color:#cbd3df;font-size:11px;font-weight:900;cursor:pointer}.detailStep:hover{border-color:#ff7a18;background:#ff7a1818}.detailStep.done{background:#35d07f22;border-color:#35d07f66}.detailStep.active{border-color:#ff7a18;box-shadow:0 0 0 2px #ff7a1822};.megaActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.megaAction{border:1px solid #343c49;border-radius:10px;background:#1b2029;color:#cbd3df;padding:9px 11px;font-weight:850;cursor:pointer}.megaAction:hover{border-color:#ff7a18;background:#ff7a1818}.megaAction.complete{border-color:#35d07f;background:#35d07f18;color:#bff5d5}.megaListTitle{margin-top:16px;font-size:12px;font-weight:900;color:#7f8a9c;text-transform:uppercase;letter-spacing:.08em}.megaList{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px;margin-top:8px}.megaString{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #2e3541;border-radius:10px;background:#0d1117;padding:8px 10px}.megaString b{display:block;font-size:11px}.megaString span{display:block;color:#7f8a9c;font-size:9px;margin-top:2px}.megaStatus{font-size:9px;font-weight:900;color:#9aa6b6}.megaStatus.installed{color:#ffd166}.megaStatus.wired,.megaStatus.done{color:#35d07f}
 @media(max-width:700px){.detailGrid{grid-template-columns:1fr}.detailSteps{grid-template-columns:repeat(2,1fr)}}
+.betaPurple{color:#d9b7ff}
+.betaEditor select{appearance:auto!important;-webkit-appearance:auto!important;pointer-events:auto!important;touch-action:auto!important;position:relative;z-index:100;cursor:pointer!important;user-select:auto!important}
+.mapHotspot.stage-changed{border-color:#b566ff;background:#b566ff66;box-shadow:0 0 0 1px #0008,0 0 10px #b566ff99}
+.connectionChangedCard{border-color:#b566ff!important;box-shadow:0 0 0 1px #b566ff33}
+.connectionChanged{color:#d9b7ff;font-weight:900}
 </style>
 </head>
 <body>
@@ -43,6 +48,22 @@
 <div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
+<section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222;position:relative;z-index:50">
+  <div style="font-weight:900;font-size:18px">🔧 Controller / Chain Editor</div>
+  <div class="small" style="margin-top:4px">Full per-prop control. Choose any controller and any port, then place the selected prop at the beginning, end, before, or after another prop. Changes apply only to the selected prop.</div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
+    <div class="detailBox" style="grid-column:1/-1"><b>Prop (alphabetical)</b><select id="betaProp" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49;pointer-events:auto;touch-action:auto;cursor:pointer"></select></div>
+    <div class="detailBox"><b>Controller</b><select id="betaController" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49;pointer-events:auto;touch-action:auto;cursor:pointer"></select></div>
+    <div class="detailBox"><b>Port</b><select id="betaPort" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49;pointer-events:auto;touch-action:auto;cursor:pointer"></select></div>
+    <div class="detailBox" style="grid-column:1/-1"><b>Chain Position</b><select id="betaPosition" style="width:100%;padding:10px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49;pointer-events:auto;touch-action:auto;cursor:pointer"></select></div>
+  </div>
+  <div id="betaCurrent" class="chainLine" style="margin-top:10px"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button type="button" class="megaAction complete" id="betaSave">SAVE THIS PROP CONNECTION</button>
+    <button type="button" class="megaAction" id="betaRestore">RESTORE ORIGINAL CONNECTION</button>
+  </div>
+  <div id="betaStatus" class="small" style="margin-top:8px"></div>
+</section>
 <div class="tools"><input id="search" placeholder="🔎 Search props..."><button id="testComplete" class="testBtn">⚡ SHOW TESTING COMPLETE</button><button id="reset">↺ Reset progress</button><button id="export">⬇ Export backup</button><label class="tools" style="margin:0"><input id="importFile" type="file" accept=".json" style="display:none"><button type="button" id="importBtn">⬆ Import backup</button></label></div>
 
 <section class="mapPanel">
@@ -1322,6 +1343,186 @@ const DATA={
     }
   ]
 };
+
+// ----- Standalone connection editor beta -----
+const BETA_KEY="halloween-light-show-progress-v2";
+let betaSaved=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
+let betaOverrides=betaSaved.__connectionOverrides||{};
+let betaSelectedId="";
+let betaDraft={controller:"",port:"",positionType:"beginning",positionProp:""};
+
+function betaSlug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function betaControllers(){return DATA.controllers.filter(c=>!/wled/i.test(c.name))}
+function betaProps(){
+  return betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))))
+    .sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
+}
+function betaKey(info){return betaSlug(info.controller.name+"-"+info.port.port+"-"+info.model)}
+function betaPorts(name){
+  if(name==="FPP-40")return Array.from({length:40},(_,i)=>"Pixel Port "+(i+1));
+  if(name==="FPP-32")return Array.from({length:32},(_,i)=>"Pixel Port "+(i+1));
+  if(/projector/i.test(name))return ["Virtual Matrix Port 1"];
+  const c=betaControllers().find(x=>x.name===name);return c?c.ports.map(p=>p.port):[];
+}
+function betaOriginal(info){
+  const idx=info.port.models.indexOf(info.model);
+  return {controller:info.controller.name,port:info.port.port,positionType:idx>0?"after":"beginning",positionProp:idx>0?info.port.models[idx-1]:""};
+}
+function betaEffective(info){return betaOverrides[betaKey(info)]||betaOriginal(info)}
+function betaCandidates(controller,port,id){
+  return betaTopology().props.filter(o=>betaKey(o)!==id&&o.model!=="Mega Tree")
+    .filter(o=>o._controller===controller&&o._port===port).map(o=>o.model)
+    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+}
+function betaSaveStore(){
+  const latest=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
+  latest.__connectionOverrides=betaOverrides;
+  localStorage.setItem(BETA_KEY,JSON.stringify({
+    state:latest.state||{},
+    __showTestingComplete:Boolean(latest.__showTestingComplete),
+    __completedProps:latest.__completedProps||{},
+    __connectionOverrides:betaOverrides
+  }));
+  betaSaved=latest;
+}
+function betaTopology(){
+  const base=betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m,id:betaKey({controller:c,port:p,model:m})}))));
+  const moved=new Set(Object.keys(betaOverrides));
+  const groups=new Map();
+
+  function gkey(controller,port){return controller+"\u0000"+port}
+  base.forEach(o=>{
+    if(moved.has(o.id))return;
+    const k=gkey(o.controller.name,o.port.port);
+    if(!groups.has(k))groups.set(k,{controller:o.controller.name,port:o.port.port,items:[]});
+    groups.get(k).items.push(o);
+  });
+
+  // Insert all moved props using their saved controller/port and position.
+  Object.keys(betaOverrides).forEach(id=>{
+    const info=base.find(o=>o.id===id); if(!info)return;
+    const ov=betaOverrides[id];
+    const k=gkey(ov.controller,ov.port);
+    if(!groups.has(k))groups.set(k,{controller:ov.controller,port:ov.port,items:[]});
+    const group=groups.get(k);
+    const item={...info,_controller:ov.controller,_port:ov.port,_override:true};
+
+    if(ov.positionType==="before"&&ov.positionProp){
+      const ix=group.items.findIndex(x=>x.model===ov.positionProp);
+      if(ix>=0){group.items.splice(ix,0,item);return;}
+    }
+    if(ov.positionType==="after"&&ov.positionProp){
+      const ix=group.items.findIndex(x=>x.model===ov.positionProp);
+      if(ix>=0){group.items.splice(ix+1,0,item);return;}
+    }
+    if(ov.positionType==="end"){group.items.push(item);return;}
+    group.items.unshift(item);
+  });
+
+  const result={groups:[...groups.values()],byId:new Map(),props:[]};
+  result.groups.forEach(g=>{
+    g.items.forEach((o,i)=>{
+      o._controller=g.controller;o._port=g.port;o._index=i;
+      result.byId.set(o.id,o);
+      result.props.push(o);
+    });
+  });
+  result.props.sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
+  return result;
+}
+function betaDisplayInfo(info){
+  const t=betaTopology();
+  return t.byId.get(betaKey(info))||{...info,_controller:info.controller.name,_port:info.port.port,_index:info.port.models.indexOf(info.model)};
+}
+function betaDisplayChain(info){
+  const t=betaTopology(), d=t.byId.get(betaKey(info));
+  if(!d)return info.model;
+  const group=t.groups.find(g=>g.controller===d._controller&&g.port===d._port);
+  return group&&group.items.length>1?group.items.map(x=>x.model).join(" → "):info.model;
+}
+function betaDisplayController(info){return betaDisplayInfo(info)._controller}
+function betaDisplayPort(info){return betaDisplayInfo(info)._port}
+
+function betaLoadProp(){
+  const props=betaProps(), info=props.find(p=>betaKey(p)===betaSelectedId)||props[0]; if(!info)return;
+  betaSelectedId=betaKey(info);
+  const e=betaEffective(info);
+  betaDraft={controller:e.controller,port:e.port,positionType:e.positionType||"beginning",positionProp:e.positionProp||""};
+  document.getElementById("betaController").value=e.controller;
+  betaLoadPorts();
+}
+function betaLoadPorts(){
+  const cm=document.getElementById("betaController"),pm=document.getElementById("betaPort"),pos=document.getElementById("betaPosition");
+  const props=betaProps(),info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
+  const ports=betaPorts(cm.value);
+  pm.innerHTML="";ports.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;pm.appendChild(o)});
+  pm.value=ports.includes(betaDraft.port)?betaDraft.port:(ports[0]||"");betaDraft.port=pm.value;
+  const names=betaCandidates(cm.value,pm.value,betaSelectedId);
+  pos.innerHTML="";
+  [["beginning","Beginning of port",""],["end","End of port",""]].forEach(([v,t,x])=>{const o=document.createElement("option");o.value=v+"|"+x;o.textContent=t;pos.appendChild(o)});
+  names.forEach(n=>{
+    let o=document.createElement("option");o.value="after|"+n;o.textContent="After: "+n;pos.appendChild(o);
+    o=document.createElement("option");o.value="before|"+n;o.textContent="Before: "+n;pos.appendChild(o);
+  });
+  const wanted=(betaDraft.positionType||"beginning")+"|"+(betaDraft.positionProp||"");
+  const valid=[...pos.options].some(o=>o.value===wanted);pos.value=valid?wanted:"beginning|";
+  const parts=pos.value.split("|");betaDraft.positionType=parts[0];betaDraft.positionProp=parts[1]||"";
+  betaShow(info);
+}
+function betaShow(info){
+  const orig=betaOriginal(info),changed=Boolean(betaOverrides[betaKey(info)]);
+  const originalChain=info.port.models.length>1?info.port.models.join(" → "):info.model;
+  const currentChain=betaDisplayChain(info);
+  const d=betaDisplayInfo(info);
+  document.getElementById("betaCurrent").innerHTML=
+    "<b>Original xLights connection:</b> "+orig.controller+" • "+orig.port+" → "+originalChain+
+    "<br><span class=\"connectionChanged\">"+(changed?"🟣 ":"")+"Current tracker connection: "+esc(d._controller)+" • "+esc(d._port)+" → "+esc(currentChain)+"</span>";
+  document.getElementById("betaStatus").textContent=changed?"🟣 Saved override for this prop only.":"Editing this prop only. Choose any controller, port, and chain position.";
+}
+function betaSelectFromMap(id){
+  const ps=document.getElementById("betaProp"); if(!ps)return;
+  ps.value=id;betaSelectedId=id;betaLoadProp();
+  document.getElementById("betaEditor")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+window.betaSelectFromMap=betaSelectFromMap;
+window.betaTopology=betaTopology;
+window.betaDisplayChain=betaDisplayChain;
+window.betaDisplayInfo=betaDisplayInfo;
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const props=betaProps(),ps=document.getElementById("betaProp"),cm=document.getElementById("betaController"),pm=document.getElementById("betaPort"),pos=document.getElementById("betaPosition");
+  ps.innerHTML="";
+  props.forEach(p=>{const o=document.createElement("option");o.value=betaKey(p);o.textContent=(betaOverrides[betaKey(p)]?"🟣 ":"")+p.model;ps.appendChild(o)});
+  betaSelectedId=props[0]?betaKey(props[0]):"";
+  cm.innerHTML=betaControllers().map(c=>"<option value=\""+c.name+"\">"+c.name+"</option>").join("");
+
+  ps.addEventListener("change",()=>{betaSelectedId=ps.value;betaLoadProp()});
+  cm.addEventListener("change",()=>{betaDraft.controller=cm.value;betaDraft.port="";betaDraft.positionType="beginning";betaDraft.positionProp="";betaLoadPorts()});
+  pm.addEventListener("change",()=>{betaDraft.port=pm.value;betaDraft.positionType="beginning";betaDraft.positionProp="";betaLoadPorts()});
+  pos.addEventListener("change",()=>{const z=pos.value.split("|");betaDraft.positionType=z[0];betaDraft.positionProp=z[1]||"";const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(info)betaShow(info)});
+
+  document.getElementById("betaSave").addEventListener("click",()=>{
+    const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
+    const orig=betaOriginal(info);
+    const same=betaDraft.controller===orig.controller&&betaDraft.port===orig.port&&betaDraft.positionType===orig.positionType&&betaDraft.positionProp===orig.positionProp;
+    if(same)delete betaOverrides[betaKey(info)];
+    else betaOverrides[betaKey(info)]={controller:betaDraft.controller,port:betaDraft.port,positionType:betaDraft.positionType,positionProp:betaDraft.positionProp};
+    betaSaveStore();
+    const opt=[...ps.options].find(o=>o.value===betaSelectedId);if(opt)opt.textContent="🟣 "+info.model;
+    betaShow(info); if(typeof render==="function")render(); if(typeof mapRender==="function")mapRender();
+    document.getElementById("betaStatus").textContent="🟣 Saved for "+info.model+" only. Other props and their progress remain intact.";
+  });
+
+  document.getElementById("betaRestore").addEventListener("click",()=>{
+    const info=props.find(p=>betaKey(p)===betaSelectedId)||props[0];if(!info)return;
+    delete betaOverrides[betaKey(info)];betaSaveStore();
+    const opt=[...ps.options].find(o=>o.value===betaSelectedId);if(opt)opt.textContent=info.model;
+    betaLoadProp();if(typeof render==="function")render();if(typeof mapRender==="function")mapRender();
+  });
+
+  betaLoadProp();
+});
+
 const stages=["UNSTARTED","INSTALLED","WIRED"];
 const icons=["⬜","🏠","🔌"];
 const key="halloween-light-show-progress-v2";
@@ -1336,7 +1537,7 @@ let completedProps=saved.__completedProps||{};
 delete state.__showTestingComplete;
 delete state.__completedProps;
 let filter="ALL", query="";
-function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps}));}
+function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps, __connectionOverrides:betaOverrides||{}}));}
 function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display="none",1800)}
 function stage(id){return Math.min(Number(state[id]||0),2)}
 function renderTabs(){
@@ -1346,14 +1547,11 @@ function renderTabs(){
 function render(){
  renderTabs();
  const app=document.getElementById("app");
- let total=props.length, ready=0, installed=0,wired=0,completed=0;
+ let total=props.length,installed=0,wired=0,completed=0;
  props.forEach(({controller:c,port:p,model:m})=>{
-   const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
-   if(s>=1)installed++;
-   if(s>=2)wired++;
-   if(completedProps[id])completed++;
+   const id=slug(c.name+"-"+p.port+"-"+m),s=stage(id);
+   if(s>=1)installed++;if(s>=2)wired++;if(completedProps[id])completed++;
  });
- // Each prop becomes fully green when its COMPLETE button is pressed.
  let pct=total?Math.round((completed/total)*100):0;
  document.getElementById("pct").textContent=pct+"%";
  document.getElementById("fill").style.width=pct+"%";
@@ -1363,18 +1561,29 @@ function render(){
  document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
  document.getElementById("testedStat").textContent=testingComplete?"⚡ Testing complete":"⚡ Testing not complete";
  document.getElementById("remainingStat").textContent="👻 "+(total-wired)+" to wire";
- const tb=document.getElementById("testComplete");
- tb.textContent=testingComplete?"✓ SHOW TESTING COMPLETE":"⚡ MARK SHOW TESTING COMPLETE";
- tb.classList.toggle("complete",testingComplete);
- let shownControllers=controllers.filter(c=>filter==="ALL"||c.name===filter);
+ const tb=document.getElementById("testComplete");tb.textContent=testingComplete?"✓ SHOW TESTING COMPLETE":"⚡ MARK SHOW TESTING COMPLETE";tb.classList.toggle("complete",testingComplete);
+
+ const topo=betaTopology();
+ let shownGroups=topo.groups.filter(g=>filter==="ALL"||g.controller===filter);
  let any=false;
- app.innerHTML=shownControllers.map(c=>{
-   const ports=c.ports.filter(p=>p.models.some(m=>matches(c,p,m)));
-   if(!ports.length)return "";
+ app.innerHTML=shownGroups.map(g=>{
+   const visible=g.items.filter(o=>matchesEffective(g,o));
+   if(!visible.length)return "";
    any=true;
-   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(c.name==="FPP-40"?"🎃":c.name==="FPP-32"?"🌲":"📽️")+" "+esc(c.name)+'</div><div class="controllerMeta">DDP '+esc(c.ip)+'</div></div></div>'+ports.map(p=>'<div class="port"><div class="portHead"><div class="portName">'+esc(p.port)+'</div><div class="chain">'+(p.models.length>1?"🔗 "+p.models.map(esc).join(" → "):"")+'</div></div><div class="cards">'+p.models.map((m,i)=>card(c,p,m,i)).join("")+"</div></div>").join("")+"</section>";
+   const ctrl=controllers.find(x=>x.name===g.controller);
+   return '<section class="controller"><div class="controllerHead"><div><div class="controllerTitle">'+(g.controller==="FPP-40"?"🎃":g.controller==="FPP-32"?"🌲":"📽️")+" "+esc(g.controller)+'</div><div class="controllerMeta">DDP '+esc(ctrl?.ip||"")+'</div></div></div>'+
+     '<div class="port"><div class="portHead"><div class="portName">'+esc(g.port)+'</div><div class="chain">🔗 '+g.items.map(o=>esc(o.model)).join(" → ")+'</div></div>'+
+     '<div class="cards">'+visible.map((o,i)=>cardEffective(o,i,g.items)).join("")+'</div></div></section>';
  }).join("") || '<div class="empty">No props match your search.</div>';
 }
+function matchesEffective(g,o){return !query||(o.model+" "+g.controller+" "+g.port).toLowerCase().includes(query.toLowerCase())}
+function cardEffective(o,i,items){
+ const id=o.id,s=stage(id),isComplete=Boolean(completedProps[id]),changed=Boolean(betaOverrides[id]);
+ const prev=i>0?items[i-1].model:"",next=i<items.length-1?items[i+1].model:"";
+ const chain=items.length>1?'<div class="chainLine">🔗 <b>Connection:</b> '+(prev?esc(prev)+" → ":"Controller → ")+esc(o.model)+(next?" → "+esc(next):"")+'</div>':"";
+ return '<article class="card '+(isComplete?"ready ":"")+(changed?"connectionChangedCard":"")+'"><div class="cardTop"><div><div class="name">'+(o._controller==="FPP-32"?"🌲":o._controller==="FPP-Projector"?"📽️":"👻")+" "+esc(o.model)+'</div><div class="meta">'+esc(o._controller)+' • '+esc(o._port)+(changed?' • 🟣 CHANGED':'')+'</div></div><span class="badge '+(isComplete?"ready":"")+'">'+(isComplete?"🎉 COMPLETE":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><button class="completeProp '+(isComplete?"complete":"")+'" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
+}
+
 function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
 function card(c,p,m,i){
  const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
@@ -1443,12 +1652,12 @@ document.addEventListener("click",e=>{ const b=e.target.closest("button");if(!b)
    else {testingComplete=true;showToast("⚡ Show testing complete!");}
    save();render();return;
  }
- if(b.id==="reset"){if(confirm("Reset every prop to Unstarted and clear show testing?")){state={};testingComplete=false;completedProps={};save();render();showToast("All progress reset")}}
- if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state,__showTestingComplete:testingComplete,__completedProps:completedProps},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+ if(b.id==="reset"){if(confirm("Reset every prop to Unstarted and clear show testing and connection changes?")){state={};testingComplete=false;completedProps={};betaOverrides={};betaSaved.__connectionOverrides={};save();render();mapRender();betaLoadProp();showToast("All progress and connection changes reset")}}
+ if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state,__showTestingComplete:testingComplete,__completedProps:completedProps,__connectionOverrides:betaOverrides},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
  if(b.id==="importBtn")document.getElementById("importFile").click();
 });
 document.getElementById("search").addEventListener("input",e=>{query=e.target.value;render()});
-document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};testingComplete=Boolean(x.__showTestingComplete);completedProps=x.__completedProps||{};delete state.__showTestingComplete;delete state.__completedProps;save();render();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
+document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};testingComplete=Boolean(x.__showTestingComplete);completedProps=x.__completedProps||{};betaOverrides=x.__connectionOverrides||{};betaSaved=x;delete state.__showTestingComplete;delete state.__completedProps;save();render();mapRender();betaLoadProp();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
 
 
 const XLIGHTS_MAP_MODELS=[{"name":"Arch_Pumpkin","x":551.61,"y":334.78,"controller":"FPP-40","mapX":551.61,"mapY":334.78},{"name":"Arch_Pumpkin-2","x":747.52,"y":331.5,"controller":"FPP-40","mapX":747.52,"mapY":331.5},{"name":"Arch_Spinner left","x":359.7,"y":333.81,"controller":"FPP-40","mapX":359.7,"mapY":333.81},{"name":"Arch_Spinner right","x":946.35,"y":326.22,"controller":"FPP-40","mapX":946.35,"mapY":326.22},{"name":"Arches Left","x":241.93,"y":385.79,"controller":"FPP-40","mapX":241.93,"mapY":385.79},{"name":"Arches Left Middle","x":479.57,"y":384.49,"controller":"FPP-40","mapX":479.57,"mapY":384.49},{"name":"Arches Right","x":1062.64,"y":382.49,"controller":"FPP-40","mapX":1062.64,"mapY":382.49},{"name":"Arches Right Middle","x":834.21,"y":385.12,"controller":"FPP-40","mapX":834.21,"mapY":385.12},{"name":"Boscoyo Black widow spider-2","x":132.25,"y":131.58,"controller":"FPP-32","mapX":132.25,"mapY":131.58},{"name":"Boscoyo ChromaBat left","x":872.57,"y":191.46,"controller":"FPP-40","mapX":872.57,"mapY":191.46},{"name":"Boscoyo ChromaBat right","x":1023.61,"y":191.48,"controller":"FPP-40","mapX":1023.61,"mapY":191.48},{"name":"Boscoyo ChromaGhost","x":940.63,"y":175.56,"controller":"FPP-40","mapX":940.63,"mapY":175.56},{"name":"Boscoyo ChromaStone 2","x":590.5,"y":455.48,"controller":"FPP-40","mapX":590.5,"mapY":455.48},{"name":"Boscoyo ChromaStone 3","x":755.22,"y":453.47,"controller":"FPP-40","mapX":755.22,"mapY":453.47},{"name":"Boscoyo ChromaStone 4","x":680.48,"y":518.33,"controller":"FPP-40","mapX":680.48,"mapY":518.33},{"name":"Boscoyo Megastone RIP","x":661.36,"y":402.83,"controller":"FPP-40","mapX":661.36,"mapY":402.83},{"name":"Candy-Corn","x":797.79,"y":281.35,"controller":"FPP-40","mapX":797.79,"mapY":281.35},{"name":"Candy-Corn-2","x":1102.56,"y":278.74,"controller":"FPP-40","mapX":1102.56,"mapY":278.74},{"name":"GE Grim Reaper 2019","x":1205.74,"y":458.96,"controller":"FPP-40","mapX":1205.74,"mapY":458.96},{"name":"GE Web Corner Left","x":356.24,"y":239.66,"controller":"FPP-40","mapX":356.24,"mapY":239.66},{"name":"GE Web Corner Right","x":768.11,"y":226.57,"controller":"FPP-40","mapX":768.11,"mapY":226.57},{"name":"Ghost RBL 1","x":415.36,"y":221.7,"controller":"FPP-40","mapX":415.36,"mapY":221.7},{"name":"Ghost RBL 2","x":484.5,"y":221.12,"controller":"FPP-40","mapX":484.5,"mapY":221.12},{"name":"Ghost RBL 3","x":655.45,"y":217.05,"controller":"FPP-40","mapX":655.45,"mapY":217.05},{"name":"Ghost RBL 4","x":707.75,"y":217.24,"controller":"FPP-40","mapX":707.75,"mapY":217.24},{"name":"Gothic-Gargoyle","x":573.31,"y":105.61,"controller":"FPP-40","mapX":573.31,"mapY":105.61},{"name":"Matrix Left Window","x":438.56,"y":176.0,"controller":"FPP-40","mapX":438.56,"mapY":176.0},{"name":"Matrix Right Window","x":702.12,"y":179.21,"controller":"FPP-40","mapX":702.12,"mapY":179.21},{"name":"Mega Tree","x":133.33,"y":259.24,"controller":"FPP-40","mapX":133.33,"mapY":259.24},{"name":"Pirate Skull Left","x":831.9,"y":225.13,"controller":"FPP-40","mapX":831.9,"mapY":225.13},{"name":"Pirate Skull Right","x":1057.48,"y":226.23,"controller":"FPP-40","mapX":1057.48,"mapY":226.23},{"name":"Projector","x":571.85,"y":178.24,"controller":"FPP-Projector","mapX":571.85,"mapY":178.24},{"name":"Skeleton_and_Coffin","x":1350.13,"y":358.09,"controller":"FPP-40","mapX":1350.13,"mapY":358.09},{"name":"Skull 1","x":579.47,"y":550.48,"controller":"FPP-40","mapX":579.47,"mapY":550.48},{"name":"Skull 2","x":677.72,"y":604.72,"controller":"FPP-40","mapX":677.72,"mapY":604.72},{"name":"Skull 3","x":773.89,"y":553.46,"controller":"FPP-40","mapX":773.89,"mapY":553.46},{"name":"Skull Pole L","x":500.49,"y":160.52,"controller":"FPP-40","mapX":500.49,"mapY":160.52},{"name":"Skull Pole R","x":647.27,"y":160.23,"controller":"FPP-40","mapX":647.27,"mapY":160.23},{"name":"Skull Wreath","x":945.27,"y":223.87,"controller":"FPP-40","mapX":945.27,"mapY":223.87},{"name":"Skull_Pixel_Stake-1","x":368.86,"y":465.51,"controller":"FPP-40","mapX":368.86,"mapY":465.51},{"name":"Skull_Pixel_Stake-2","x":455.64,"y":464.1,"controller":"FPP-40","mapX":455.64,"mapY":464.1},{"name":"Skull_Pixel_Stake-3","x":861.72,"y":468.5,"controller":"FPP-40","mapX":861.72,"mapY":468.5},{"name":"Skull_Pixel_Stake-4","x":956.69,"y":471.82,"controller":"FPP-40","mapX":956.69,"mapY":471.82},{"name":"Spider Left Peak","x":434.03,"y":112.72,"controller":"FPP-40","mapX":434.03,"mapY":112.72},{"name":"Spider RIght Peak","x":711.76,"y":112.44,"controller":"FPP-40","mapX":711.76,"mapY":112.44},{"name":"Witch with cauldron Non singing","x":90.5,"y":474.5,"controller":"FPP-40","mapX":90.5,"mapY":474.5},{"name":"Zombie1","x":593.4,"y":389.63,"controller":"FPP-40","mapX":593.4,"mapY":389.63},{"name":"Zombie2","x":745.49,"y":390.45,"controller":"FPP-40","mapX":745.49,"mapY":390.45},{"name":"Zombie3","x":676.9,"y":462.56,"controller":"FPP-40","mapX":676.9,"mapY":462.56},{"name":"Zombie4","x":541.52,"y":508.62,"controller":"FPP-40","mapX":541.52,"mapY":508.62},{"name":"Zombie5","x":785.28,"y":499.1,"controller":"FPP-40","mapX":785.28,"mapY":499.1},{"name":"retro cat","x":257.58,"y":507.62,"controller":"FPP-40","mapX":257.58,"mapY":507.62}];
@@ -1480,32 +1689,39 @@ function mapInfoFor(name){
   stage.style.transform=`translate(${mapPanX}px,${mapPanY}px) scale(${mapZoom})`;
 }
 function mapRender(){
-  const hs=document.getElementById('mapHotspots'); if(!hs)return;
+  const hs=document.getElementById('mapHotspots');if(!hs)return;
   hs.innerHTML='';
   XLIGHTS_MAP_MODELS.forEach(m=>{
-    const p=mapXY(m.mapX,m.mapY), info=mapInfoFor(m.name);    const b=document.createElement('button'); b.type='button'; b.className='mapHotspot';
-    b.style.left=p.x+'%'; b.style.top=p.y+'%';
-    if(info){const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model); const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]); const s=info.__groupId?megaTreeStage():stage(id); b.classList.add(done?'complete':s>=1?'stage-installed':'stage-unstarted'); if(!done&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');}
-    b.title=m.name; b.addEventListener('click',e=>{e.stopPropagation();openMapDetail(m,info);}); hs.appendChild(b);
+    const p=mapXY(m.mapX,m.mapY),info=mapInfoFor(m.name),b=document.createElement('button');
+    b.type='button';b.className='mapHotspot';b.style.left=p.x+'%';b.style.top=p.y+'%';
+    if(info){
+      const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model);
+      const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]);
+      const s=info.__groupId?megaTreeStage():stage(id);
+      const changed=!info.__groupId&&Boolean(betaOverrides[id]);
+      b.classList.add(done?'complete':changed?'stage-changed':s>=1?'stage-installed':'stage-unstarted');
+      if(!done&&!changed&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');
+    }
+    b.title=m.name;b.addEventListener('click',e=>{e.stopPropagation();openMapDetail(m,info)});hs.appendChild(b);
   });
   applyMapTransform();
 }
-
 function openMapDetail(m,info){
-  const modal=document.getElementById("mapModal"), body=document.getElementById("detailBody");
-  const detail=document.getElementById("detailImage"), focus=document.getElementById("detailFocus");
-  detail.src=XLIGHTS_MAP_IMAGE;
-  const p=mapXY(m.x,m.y);
-  focus.style.left=p.x+"%"; focus.style.top=p.y+"%"; focus.style.width="52px"; focus.style.height="52px";
-  if(info && info.__groupId==='mega-tree-group'){
-    const s=megaTreeStage(), done=megaTreeDone(), ctrl=megaTreeProps[0]?.controller;
+  const modal=document.getElementById("mapModal"),body=document.getElementById("detailBody"),detail=document.getElementById("detailImage"),focus=document.getElementById("detailFocus");
+  detail.src=XLIGHTS_MAP_IMAGE;const p=mapXY(m.x,m.y);focus.style.left=p.x+"%";focus.style.top=p.y+"%";focus.style.width="52px";focus.style.height="52px";
+  if(info&&info.__groupId==='mega-tree-group'){
+    const s=megaTreeStage(),done=megaTreeDone(),ctrl=megaTreeProps[0]?.controller;
     body.innerHTML='<div class="detailTitle">Mega Tree</div><div class="detailMeta">'+esc(ctrl?.name||'FPP-32')+' • 24 strings treated as one prop</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(ctrl?.name||'FPP-32')+'</span></div><div class="detailBox"><b>Ports</b><span>Pixel Ports 1–24</span></div><div class="detailBox"><b>Strings</b><span>24</span></div><div class="detailBox"><b>Status</b><span>'+(done?'COMPLETE':s===2?'WIRED':s===1?'INSTALLED':'UNSTARTED')+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-mega-group-stage="'+j+'">'+x+'</button>').join('')+'<button type="button" class="detailStep '+(done?'done':'')+'" data-mega-group-complete="1">'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><div class="small" style="margin-top:10px">Click a step above to update the entire Mega Tree.</div>';
-    modal.classList.add("open"); return;
-  }  if(!info){body.innerHTML='<div class="detailTitle">'+esc(m.name)+'</div><div class="detailMeta">This xLights model is present on the layout, but it is not in the current tracker data.</div>';}
+    modal.classList.add("open");return;
+  }
+  if(!info){body.innerHTML='<div class="detailTitle">'+esc(m.name)+'</div><div class="detailMeta">This xLights model is present on the layout, but it is not in the current tracker data.</div>';}
   else{
-    const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model), s=stage(id), done=Boolean(completedProps[id]);
-    const chain=info.port.models.length>1?info.port.models.join(" → "):info.model;
-    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div><div class="detailMeta">Exact xLights layout position • '+esc(info.controller.name)+'</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(info.controller.name)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(info.port.port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc(info.controller.ip||"")+'</span></div><div class="detailBox"><b>Chain</b><span>'+esc(chain)+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><div class="small" style="margin-top:10px">Click a step above to update this prop.</div>';
+    const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model),s=stage(id),done=Boolean(completedProps[id]),d=betaDisplayInfo(info),chain=betaDisplayChain(info),orig=betaOriginal(info),changed=Boolean(betaOverrides[id]);
+    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div>'+
+      '<div class="detailMeta">Exact xLights layout position • '+esc(d._controller)+(changed?' • <span class="connectionChanged">🟣 CONNECTION CHANGED</span>':'')+'</div>'+
+      '<div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(d._controller)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(d._port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc((controllers.find(x=>x.name===d._controller)?.ip)||info.controller.ip||"")+'</span></div><div class="detailBox"><b>Current Chain</b><span>'+esc(chain)+'</span></div><div class="detailBox"><b>Original xLights Connection</b><span>'+esc(orig.controller)+' • '+esc(orig.port)+' → '+esc(info.port.models.length>1?info.port.models.join(" → "):info.model)+'</span></div></div>'+
+      '<div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div>'+
+      '<button type="button" class="megaAction" style="margin-top:12px" onclick="betaSelectFromMap(\''+esc(id)+'\')">✎ EDIT THIS PROP CONNECTION</button>';
   }
   modal.classList.add("open");
 }
