@@ -8,7 +8,7 @@
 <title>Halloween Light Show Command Center</title>
 <style>
 :root{--bg:#0b0d12;--panel:#151922;--card:#1b202b;--line:#303746;--text:#f7f7f8;--muted:#a9b0bd;--accent:#ff7a18;--green:#35d07f;--yellow:#f5c542;--red:#ff5d5d;--blue:#59a8ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#222938 0,#0b0d12 42%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;color:inherit}.wrap{max-width:1100px;margin:auto;padding:18px 14px 60px}.hero{background:linear-gradient(135deg,#20140b,#171b24 55%,#10131a);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 15px 40px #0006}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:800}.hero h1{font-size:28px;margin:5px 0}.hero p{margin:0;color:var(--muted)}.progressRow{display:flex;justify-content:space-between;align-items:end;margin-top:20px}.pct{font-size:42px;font-weight:900}.bar{height:12px;background:#2b303a;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.35s}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.stat{padding:7px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;background:#ffffff08}.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 4px;position:sticky;top:0;background:#0b0d12ee;backdrop-filter:blur(10px);z-index:5}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#ff7a1818}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}.tools button,.tools input{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px}.tools input{flex:1;min-width:190px;color:var(--text)}.testBtn{border-color:var(--green)!important;background:#35d07f18!important;font-weight:900}.testBtn.complete{background:var(--green)!important;color:#0b2215!important}.controller{margin:18px 0}.controllerHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.controllerTitle{font-size:18px;font-weight:900}.controllerMeta{font-size:12px;color:var(--muted)}.port{border:1px solid var(--line);border-radius:18px;background:#ffffff04;margin:10px 0;padding:12px}.portHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.portName{font-weight:900}.chain{font-size:11px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:14px;transition:.2s}.card.ready{border-color:var(--green);box-shadow:0 0 0 1px #35d07f22}.card.changed{border-color:#b566ff;background:#241934;box-shadow:0 0 0 1px #b566ff33}.badge.changed{color:#f0ddff;background:#7a35b8}.connectionChanged{color:#d9b7ff;font-weight:900}.cardTop{display:flex;justify-content:space-between;gap:10px}.name{font-weight:900;font-size:16px}.badge{font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px;background:#ffffff0d;white-space:nowrap}.badge.ready{color:#0b2215;background:#35d07f}.meta{font-size:11px;color:var(--muted);margin-top:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.step{border:1px solid var(--line);background:#10131a;border-radius:11px;padding:9px 3px;font-size:10px;font-weight:900;cursor:pointer}.step.active{border-color:var(--accent);background:#ff7a1820}.step.done{border-color:var(--green);background:#35d07f18}.completeProp{width:100%;margin-top:9px;border:1px solid var(--green);background:#35d07f12;border-radius:11px;padding:10px;font-weight:900;cursor:pointer}.completeProp:disabled{opacity:.45;cursor:not-allowed}.completeProp.complete{background:var(--green);color:#0b2215}.completeProp:focus-visible,.step:focus-visible,.tab:focus-visible,.tools button:focus-visible,.tools input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.chainLine{margin:8px 0 0;padding:8px 10px;border-radius:11px;background:#0e1117;border:1px dashed var(--line);font-size:11px;color:var(--muted)}.chainLine b{color:var(--text)}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:white;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:20}.small{font-size:12px;color:var(--muted)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#222938 0,#0b0d12 42%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button{font:inherit;color:inherit}.wrap{max-width:1100px;margin:auto;padding:18px 14px 60px}.hero{background:linear-gradient(135deg,#20140b,#171b24 55%,#10131a);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 15px 40px #0006}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:800}.hero h1{font-size:28px;margin:5px 0}.hero p{margin:0;color:var(--muted)}.progressRow{display:flex;justify-content:space-between;align-items:end;margin-top:20px}.pct{font-size:42px;font-weight:900}.bar{height:12px;background:#2b303a;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.35s}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.stat{padding:7px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;background:#ffffff08}.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0 4px;position:sticky;top:0;background:#0b0d12ee;backdrop-filter:blur(10px);z-index:5}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#ff7a1818}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}.tools button,.tools input{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px}.tools input{flex:1;min-width:190px;color:var(--text)}.testBtn{border-color:var(--green)!important;background:#35d07f18!important;font-weight:900}.testBtn.complete{background:var(--green)!important;color:#0b2215!important}.controller{margin:18px 0}.controllerHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.controllerTitle{font-size:18px;font-weight:900}.controllerMeta{font-size:12px;color:var(--muted)}.port{border:1px solid var(--line);border-radius:18px;background:#ffffff04;margin:10px 0;padding:12px}.portHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.portName{font-weight:900}.chain{font-size:11px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:14px;transition:.2s}.card.ready{border-color:var(--green);box-shadow:0 0 0 1px #35d07f22}.cardTop{display:flex;justify-content:space-between;gap:10px}.name{font-weight:900;font-size:16px}.badge{font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px;background:#ffffff0d;white-space:nowrap}.badge.ready{color:#0b2215;background:#35d07f}.meta{font-size:11px;color:var(--muted);margin-top:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.step{border:1px solid var(--line);background:#10131a;border-radius:11px;padding:9px 3px;font-size:10px;font-weight:900;cursor:pointer}.step.active{border-color:var(--accent);background:#ff7a1820}.step.done{border-color:var(--green);background:#35d07f18}.completeProp{width:100%;margin-top:9px;border:1px solid var(--green);background:#35d07f12;border-radius:11px;padding:10px;font-weight:900;cursor:pointer}.completeProp:disabled{opacity:.45;cursor:not-allowed}.completeProp.complete{background:var(--green);color:#0b2215}.completeProp:focus-visible,.step:focus-visible,.tab:focus-visible,.tools button:focus-visible,.tools input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.chainLine{margin:8px 0 0;padding:8px 10px;border-radius:11px;background:#0e1117;border:1px dashed var(--line);font-size:11px;color:var(--muted)}.chainLine b{color:var(--text)}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:white;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:20}.small{font-size:12px;color:var(--muted)}
 @media(max-width:560px){.wrap{padding:12px 10px 40px}.hero{padding:16px}.hero h1{font-size:23px}.pct{font-size:34px}.steps{gap:4px}.step{font-size:9px;padding:9px 1px}.cards{grid-template-columns:1fr}}
 .step.completeStep{background:var(--green);color:#0b2215;border-color:var(--green)}
 .step.wiredGreen{background:var(--green);color:#0b2215;border-color:var(--green)}.step.done{box-shadow:none!important}.step.done:hover{border-color:var(--green)!important;background:#35d07f!important;color:#0b2215!important}
@@ -24,8 +24,8 @@
 .mapImage{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
 #mapHotspots{position:absolute;inset:0;pointer-events:none}
 .mapHotspot{pointer-events:auto;position:absolute;width:14px;height:14px;border:1.5px solid #ff4d4d;border-radius:50%;background:#ff4d4d55;transform:translate(-50%,-50%);cursor:pointer;z-index:3;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66;padding:0}
-.mapHotspot.stage-unstarted{border-color:#ff4d4d;background:#ff4d4d55;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66}.mapHotspot.stage-installed,.mapHotspot.stage-wired{border-color:#ff8a00;background:#ff8a004d;box-shadow:0 0 0 1px #0008,0 0 8px #ff8a0066}.mapHotspot.stage-changed{border-color:#b566ff;background:#b566ff66;box-shadow:0 0 0 1px #0008,0 0 10px #b566ff99}.mapHotspot.complete{border-color:#35d07f;background:#35d07f55;box-shadow:0 0 0 1px #0008,0 0 10px #35d07f88}.mapHotspot:hover,.mapHotspot.selected{filter:brightness(1.18);z-index:5}
-.mapLegend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;color:#aeb7c6;font-size:11px;border-top:1px solid #303744}.mapLegend span{display:flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#ff4d4d}.dot.unstarted{background:#ff4d4d}.dot.installed{background:#ff8a00}.dot.changed{background:#b566ff}.dot.done{background:#35d07f}
+.mapHotspot.stage-unstarted{border-color:#ff4d4d;background:#ff4d4d55;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66}.mapHotspot.stage-installed,.mapHotspot.stage-wired{border-color:#ff8a00;background:#ff8a004d;box-shadow:0 0 0 1px #0008,0 0 8px #ff8a0066}.mapHotspot.complete{border-color:#35d07f;background:#35d07f55;box-shadow:0 0 0 1px #0008,0 0 10px #35d07f88}.mapHotspot:hover,.mapHotspot.selected{filter:brightness(1.18);z-index:5}
+.mapLegend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;color:#aeb7c6;font-size:11px;border-top:1px solid #303744}.mapLegend span{display:flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#ff4d4d}.dot.unstarted{background:#ff4d4d}.dot.installed{background:#ff8a00}.dot.done{background:#35d07f}
 .mapHint{padding:0 14px 12px;color:#7f8a9c;font-size:11px}
 .mapModal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:100}.mapModal.open{display:flex}.mapDialog{width:min(900px,100%);max-height:92vh;overflow:auto;background:#12161d;border:1px solid #394150;border-radius:20px;box-shadow:0 25px 80px #000;position:relative}.mapClose{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:50%;border:1px solid #46505f;background:#202733;color:#fff;font-size:20px;cursor:pointer;z-index:2}
 .detailImageWrap{background:#000;position:relative;overflow:hidden}.detailImage{display:block;width:100%;height:auto}.detailFocus{position:absolute;border:3px solid #35d07f;border-radius:10px;box-shadow:0 0 0 9999px #0004,0 0 30px #35d07f99;pointer-events:none}.detailBody{padding:18px}.detailTitle{font-size:23px;font-weight:950}.detailMeta{color:#aeb7c6;margin-top:5px}.detailGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.detailBox{background:#0d1117;border:1px solid #2e3541;border-radius:12px;padding:11px}.detailBox b{display:block;color:#7f8a9c;font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}.detailBox span{font-weight:850}.detailSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}.detailStep{padding:10px 5px;border:1px solid #343c49;border-radius:10px;text-align:center;background:#1b2029;color:#cbd3df;font-size:11px;font-weight:900;cursor:pointer}.detailStep:hover{border-color:#ff7a18;background:#ff7a1818}.detailStep.done{background:#35d07f22;border-color:#35d07f66}.detailStep.active{border-color:#ff7a18;box-shadow:0 0 0 2px #ff7a1822};.megaActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.megaAction{border:1px solid #343c49;border-radius:10px;background:#1b2029;color:#cbd3df;padding:9px 11px;font-weight:850;cursor:pointer}.megaAction:hover{border-color:#ff7a18;background:#ff7a1818}.megaAction.complete{border-color:#35d07f;background:#35d07f18;color:#bff5d5}.megaListTitle{margin-top:16px;font-size:12px;font-weight:900;color:#7f8a9c;text-transform:uppercase;letter-spacing:.08em}.megaList{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px;margin-top:8px}.megaString{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #2e3541;border-radius:10px;background:#0d1117;padding:8px 10px}.megaString b{display:block;font-size:11px}.megaString span{display:block;color:#7f8a9c;font-size:9px;margin-top:2px}.megaStatus{font-size:9px;font-weight:900;color:#9aa6b6}.megaStatus.installed{color:#ffd166}.megaStatus.wired,.megaStatus.done{color:#35d07f}
@@ -49,7 +49,7 @@
   <div class="mapHead"><div><h2>🎃 Interactive Show Layout</h2><div class="small">Click a circle for prop information. Drag to pan when zoomed.</div></div>
     <div class="mapTools"><button type="button" id="mapZoomOut">−</button><button type="button" id="mapZoomReset">100%</button><button type="button" id="mapZoomIn">+</button></div></div>
   <div class="mapViewport" id="mapViewport"><div class="mapStage" id="mapStage"><img class="mapImage" id="mapImage" alt="Halloween xLights house layout" src="layout.png"><div id="mapHotspots"></div></div></div>
-  <div class="mapLegend"><span><i class="dot unstarted"></i> Not installed</span><span><i class="dot installed"></i> Installed / Wired</span><span><i class="dot changed"></i> Connection changed</span><span><i class="dot done"></i> Complete</span></div>
+  <div class="mapLegend"><span><i class="dot unstarted"></i> Not installed</span><span><i class="dot installed"></i> Installed / Wired</span><span><i class="dot done"></i> Complete</span></div>
   <div class="mapHint">Small circles are positioned from your manually corrected layout. Zoom and drag the map to inspect the props.</div>
 </section>
 <div class="mapModal" id="mapModal">
@@ -57,24 +57,6 @@
     <button class="mapClose" id="mapClose">×</button>
     <div class="detailImageWrap"><img class="detailImage" id="detailImage" alt=""><div class="detailFocus" id="detailFocus"></div></div>
     <div class="detailBody" id="detailBody"></div>
-  </div>
-</div>
-<div class="mapModal" id="connectionModal">
-  <div class="mapDialog" style="max-width:560px">
-    <button class="mapClose" id="connectionClose">×</button>
-    <div class="detailBody">
-      <div class="detailTitle" id="connectionModalTitle">Edit Controller Connection</div>
-      <div class="detailMeta" id="connectionPropName"></div>
-      <div class="detailGrid" style="margin-top:18px">
-        <div class="detailBox"><b>Controller</b><select id="editController" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
-        <div class="detailBox"><b>Port</b><select id="editPort" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
-      </div>
-      <div class="small" style="margin-top:12px">For a chained prop, the controller/port belongs to the first prop in the chain. Saving here changes the <b>entire chain connection</b> and marks the chain purple until the affected props are complete.</div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-        <button type="button" class="megaAction" id="connectionCancel">CANCEL</button>
-        <button type="button" class="megaAction complete" id="connectionSave">SAVE CONNECTION</button>
-      </div>
-    </div>
   </div>
 </div>
 <div id="app"></div>
@@ -1351,77 +1333,10 @@ let state=saved.state||saved||{};
 if(state && state.__showTestingComplete!==undefined){ /* v2 */ }
 let testingComplete=Boolean(saved.__showTestingComplete);
 let completedProps=saved.__completedProps||{};
-let connectionOverrides=saved.__connectionOverrides||{};
 delete state.__showTestingComplete;
 delete state.__completedProps;
-delete state.__connectionOverrides;
 let filter="ALL", query="";
-function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps, __connectionOverrides:connectionOverrides}));}
-const EFFECTIVE_CONTROLLERS=controllers;
-function originalConnection(info){return {controller:info.controller.name,port:info.port.port};}
-function chainFor(info){
-  const models=info?.port?.models||[];
-  const index=models.indexOf(info?.model);
-  const isChained=models.length>1;
-  return {models:models.length?models:[info?.model],index:Math.max(index,0),rootModel:models.length?models[0]:info?.model,isChained};
-}
-function chainDisplay(info,id){
-  const ch=chainFor(info), conn=connectionFor(info,id);
-  const chainText=ch.models.join(" → ");
-  if(ch.isChained) return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(ch.rootModel)+" → "+(ch.models.length>1?esc(ch.models.slice(1).join(" → ")):"");
-  return esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(info.model);
-}
-function connectionKey(info){
-  const ch=chainFor(info);
-  return slug(info.controller.name+"-"+info.port.port+"-"+ch.rootModel);
-}
-function connectionOverrideFor(info,id){
-  const key=connectionKey(info);
-  return connectionOverrides[key]||connectionOverrides[id]||null;
-}
-function connectionFor(info,id){
-  const o=connectionOverrideFor(info,id);
-  if(o && o.controller && o.port)return {controller:o.controller,port:o.port,changed:true};
-  const base=originalConnection(info); return {...base,changed:false};
-}
-function isConnectionChanged(id){
-  const info=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===id);
-  return info?Boolean(connectionOverrideFor(info,id)):Boolean(connectionOverrides[id]);
-}
-function controllerPorts(controllerName){
-  const c=EFFECTIVE_CONTROLLERS.find(x=>x.name===controllerName);
-  if(!c)return [];
-  if(controllerName==="FPP-40")return Array.from({length:40},(_,i)=>"Pixel Port "+(i+1));
-  if(controllerName==="FPP-32")return Array.from({length:32},(_,i)=>"Pixel Port "+(i+1));
-  if(/projector/i.test(controllerName))return ["Virtual Matrix Port 1"];
-  return c.ports.map(p=>p.port);
-}
-let editingConnectionId=null, editingConnectionMembers=[];
-function openConnectionEditor(info){
-  if(!info || info.__groupId)return;
-  const ch=chainFor(info);
-  editingConnectionId=slug(info.controller.name+"-"+info.port.port+"-"+ch.rootModel);
-  editingConnectionMembers=ch.models.map(model=>props.find(o=>o.controller===info.controller&&o.port===info.port&&o.model===model)).filter(Boolean);
-  if(!editingConnectionMembers.length)editingConnectionMembers=[info];
-  const effective=connectionFor(info,editingConnectionId);
-  const root=editingConnectionMembers[0]||info;
-  const cm=document.getElementById("editController"), pm=document.getElementById("editPort"), nm=document.getElementById("connectionPropName"), mt=document.getElementById("connectionModalTitle");
-  cm.innerHTML=EFFECTIVE_CONTROLLERS.map(c=>'<option value="'+esc(c.name)+'">'+esc(c.name)+'</option>').join("");
-  cm.value=effective.controller;
-  function refreshPorts(){const ports=controllerPorts(cm.value);pm.innerHTML=ports.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join(""); if(!ports.includes(effective.port))pm.value=ports[0]||""; else pm.value=effective.port;}
-  cm.onchange=()=>refreshPorts();
-  refreshPorts();
-  mt.textContent=ch.isChained?"Edit Chain Controller Connection":"Edit Controller Connection";
-  nm.innerHTML=ch.isChained
-    ? "Chain root: <b>"+esc(root.model)+"</b><br><span style=\"font-size:12px\">"+esc(ch.models.join(" → "))+"</span>"
-    : "Prop: "+esc(info.model);
-  document.getElementById("connectionModal").classList.add("open");
-}
-function closeConnectionEditor(){editingConnectionId=null;editingConnectionMembers=[];document.getElementById("connectionModal").classList.remove("open");}
-function editConnectionById(id){
-  const info=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===id);
-  if(info)openConnectionEditor(info);
-}
+function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps}));}
 function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display="none",1800)}
 function stage(id){return Math.min(Number(state[id]||0),2)}
 function renderTabs(){
@@ -1463,21 +1378,14 @@ function render(){
 function matches(c,p,m){return !query || (m+" "+c.name+" "+p.port).toLowerCase().includes(query.toLowerCase())}
 function card(c,p,m,i){
  const id=slug(c.name+"-"+p.port+"-"+m), s=stage(id);
- const isComplete=Boolean(completedProps[id]), changed=isConnectionChanged(id), conn=connectionFor({controller:c,port:p,model:m},id);
- const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Chain:</b> '+chainDisplay({controller:c,port:p,model:m},id)+'</div>' : '<div class="chainLine">🔌 <b>Connection:</b> '+esc(conn.controller)+' • '+esc(conn.port)+'</div>';
- const editLabel=p.models.length>1?"✎ EDIT CHAIN CONNECTION":"✎ EDIT CONNECTION";
- return '<article class="card '+(isComplete?"ready ":changed?"changed ":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(conn.controller)+' • '+esc(conn.port)+(changed?' <span class="connectionChanged">• CONNECTION CHANGED</span>':'')+'</div></div><span class="badge '+(isComplete?"ready":changed?"changed":"")+'">'+(isComplete?"🎉 COMPLETE":changed?"🟣 CHANGED":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><div style="display:flex;gap:8px;margin-top:9px"><button class="completeProp '+(isComplete?"complete":"")+'" style="margin-top:0;flex:1" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><button type="button" class="megaAction" style="flex:0 0 auto" data-edit-connection="'+id+'" onclick="editConnectionById(this.dataset.editConnection);return false;">'+editLabel+'</button></div><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":changed?"🟣 Connection changed — complete this "+(p.models.length>1?"chain":"prop")+" when the new setup is finished.":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
+ const chain=p.models.length>1 ? '<div class="chainLine">🔗 <b>Connection:</b> '+(i===0?"Controller → "+esc(m):esc(p.models[i-1])+" → "+esc(m))+(i<p.models.length-1?" → "+esc(p.models[i+1]):"")+"</div>" : "";
+ const isComplete=Boolean(completedProps[id]);
+ return '<article class="card '+(isComplete?"ready":"")+'"><div class="cardTop"><div><div class="name">'+(c.name==="FPP-32"?"🌲":c.name==="FPP-Projector"?"📽️":"👻")+" "+esc(m)+'</div><div class="meta">'+esc(c.name)+' • '+esc(p.port)+'</div></div><span class="badge '+(isComplete?"ready":"")+'">'+(isComplete?"🎉 COMPLETE":stages[s])+'</span></div>'+chain+'<div class="steps">'+stages.map((x,j)=>'<button class="step '+(isComplete||s>j?"done ":"")+(!isComplete&&s===j?"active ":"")+(s===2&&j===2&&!isComplete?"wiredGreen ":"")+'" data-id="'+id+'" data-stage="'+j+'">'+icons[j]+'<br>'+x+'</button>').join("")+'</div><button class="completeProp '+(isComplete?"complete":"")+'" data-complete-id="'+id+'" '+(s<2&&!isComplete?"disabled":"")+'>'+(isComplete?"✓ COMPLETE":"✓ MARK COMPLETE")+'</button><div class="small" style="margin-top:9px">'+(isComplete?"🎃 This prop is complete!":s===2?"Ready to mark complete after show testing":"Next: "+stages[Math.min(s+1,2)])+'</div></article>';
 }
 function slug(x){return x.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 document.addEventListener("click",e=>{ const b=e.target.closest("button");if(!b)return;
  if(b.dataset.filter){filter=b.dataset.filter;render();return}
- if(b.dataset.editConnection){
-   const id=b.dataset.editConnection;
-   const infoEdit=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===id);
-   if(infoEdit)openConnectionEditor(infoEdit);
-   return;
- }
  if(b.dataset.completeId){
    const id=b.dataset.completeId;
    if(!completedProps[id] && stage(id)<2){showToast("Wire this prop before marking it complete");return}
@@ -1535,12 +1443,12 @@ document.addEventListener("click",e=>{ const b=e.target.closest("button");if(!b)
    else {testingComplete=true;showToast("⚡ Show testing complete!");}
    save();render();return;
  }
- if(b.id==="reset"){if(confirm("Reset every prop to Unstarted and clear show testing?")){state={};testingComplete=false;completedProps={};connectionOverrides={};save();render();showToast("All progress reset")}}
- if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state,__showTestingComplete:testingComplete,__completedProps:completedProps,__connectionOverrides:connectionOverrides},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+ if(b.id==="reset"){if(confirm("Reset every prop to Unstarted and clear show testing?")){state={};testingComplete=false;completedProps={};save();render();showToast("All progress reset")}}
+ if(b.id==="export"){const blob=new Blob([JSON.stringify({savedAt:new Date().toISOString(),state,__showTestingComplete:testingComplete,__completedProps:completedProps},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="halloween-light-show-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
  if(b.id==="importBtn")document.getElementById("importFile").click();
 });
 document.getElementById("search").addEventListener("input",e=>{query=e.target.value;render()});
-document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rr=new FileReader();rr.onload=()=>{try{const x=JSON.parse(rr.result);state=x.state||{};testingComplete=Boolean(x.__showTestingComplete);completedProps=x.__completedProps||{};connectionOverrides=x.__connectionOverrides||{};delete state.__showTestingComplete;delete state.__completedProps;delete state.__connectionOverrides;save();render();showToast("Backup imported — progress restored")}catch{showToast("Invalid backup file")}};rr.readAsText(f)});
+document.getElementById("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);state=x.state||{};testingComplete=Boolean(x.__showTestingComplete);completedProps=x.__completedProps||{};delete state.__showTestingComplete;delete state.__completedProps;save();render();showToast("Backup imported")}catch{showToast("Invalid backup file")}};r.readAsText(f)});
 
 
 const XLIGHTS_MAP_MODELS=[{"name":"Arch_Pumpkin","x":551.61,"y":334.78,"controller":"FPP-40","mapX":551.61,"mapY":334.78},{"name":"Arch_Pumpkin-2","x":747.52,"y":331.5,"controller":"FPP-40","mapX":747.52,"mapY":331.5},{"name":"Arch_Spinner left","x":359.7,"y":333.81,"controller":"FPP-40","mapX":359.7,"mapY":333.81},{"name":"Arch_Spinner right","x":946.35,"y":326.22,"controller":"FPP-40","mapX":946.35,"mapY":326.22},{"name":"Arches Left","x":241.93,"y":385.79,"controller":"FPP-40","mapX":241.93,"mapY":385.79},{"name":"Arches Left Middle","x":479.57,"y":384.49,"controller":"FPP-40","mapX":479.57,"mapY":384.49},{"name":"Arches Right","x":1062.64,"y":382.49,"controller":"FPP-40","mapX":1062.64,"mapY":382.49},{"name":"Arches Right Middle","x":834.21,"y":385.12,"controller":"FPP-40","mapX":834.21,"mapY":385.12},{"name":"Boscoyo Black widow spider-2","x":132.25,"y":131.58,"controller":"FPP-32","mapX":132.25,"mapY":131.58},{"name":"Boscoyo ChromaBat left","x":872.57,"y":191.46,"controller":"FPP-40","mapX":872.57,"mapY":191.46},{"name":"Boscoyo ChromaBat right","x":1023.61,"y":191.48,"controller":"FPP-40","mapX":1023.61,"mapY":191.48},{"name":"Boscoyo ChromaGhost","x":940.63,"y":175.56,"controller":"FPP-40","mapX":940.63,"mapY":175.56},{"name":"Boscoyo ChromaStone 2","x":590.5,"y":455.48,"controller":"FPP-40","mapX":590.5,"mapY":455.48},{"name":"Boscoyo ChromaStone 3","x":755.22,"y":453.47,"controller":"FPP-40","mapX":755.22,"mapY":453.47},{"name":"Boscoyo ChromaStone 4","x":680.48,"y":518.33,"controller":"FPP-40","mapX":680.48,"mapY":518.33},{"name":"Boscoyo Megastone RIP","x":661.36,"y":402.83,"controller":"FPP-40","mapX":661.36,"mapY":402.83},{"name":"Candy-Corn","x":797.79,"y":281.35,"controller":"FPP-40","mapX":797.79,"mapY":281.35},{"name":"Candy-Corn-2","x":1102.56,"y":278.74,"controller":"FPP-40","mapX":1102.56,"mapY":278.74},{"name":"GE Grim Reaper 2019","x":1205.74,"y":458.96,"controller":"FPP-40","mapX":1205.74,"mapY":458.96},{"name":"GE Web Corner Left","x":356.24,"y":239.66,"controller":"FPP-40","mapX":356.24,"mapY":239.66},{"name":"GE Web Corner Right","x":768.11,"y":226.57,"controller":"FPP-40","mapX":768.11,"mapY":226.57},{"name":"Ghost RBL 1","x":415.36,"y":221.7,"controller":"FPP-40","mapX":415.36,"mapY":221.7},{"name":"Ghost RBL 2","x":484.5,"y":221.12,"controller":"FPP-40","mapX":484.5,"mapY":221.12},{"name":"Ghost RBL 3","x":655.45,"y":217.05,"controller":"FPP-40","mapX":655.45,"mapY":217.05},{"name":"Ghost RBL 4","x":707.75,"y":217.24,"controller":"FPP-40","mapX":707.75,"mapY":217.24},{"name":"Gothic-Gargoyle","x":573.31,"y":105.61,"controller":"FPP-40","mapX":573.31,"mapY":105.61},{"name":"Matrix Left Window","x":438.56,"y":176.0,"controller":"FPP-40","mapX":438.56,"mapY":176.0},{"name":"Matrix Right Window","x":702.12,"y":179.21,"controller":"FPP-40","mapX":702.12,"mapY":179.21},{"name":"Mega Tree","x":133.33,"y":259.24,"controller":"FPP-40","mapX":133.33,"mapY":259.24},{"name":"Pirate Skull Left","x":831.9,"y":225.13,"controller":"FPP-40","mapX":831.9,"mapY":225.13},{"name":"Pirate Skull Right","x":1057.48,"y":226.23,"controller":"FPP-40","mapX":1057.48,"mapY":226.23},{"name":"Projector","x":571.85,"y":178.24,"controller":"FPP-Projector","mapX":571.85,"mapY":178.24},{"name":"Skeleton_and_Coffin","x":1350.13,"y":358.09,"controller":"FPP-40","mapX":1350.13,"mapY":358.09},{"name":"Skull 1","x":579.47,"y":550.48,"controller":"FPP-40","mapX":579.47,"mapY":550.48},{"name":"Skull 2","x":677.72,"y":604.72,"controller":"FPP-40","mapX":677.72,"mapY":604.72},{"name":"Skull 3","x":773.89,"y":553.46,"controller":"FPP-40","mapX":773.89,"mapY":553.46},{"name":"Skull Pole L","x":500.49,"y":160.52,"controller":"FPP-40","mapX":500.49,"mapY":160.52},{"name":"Skull Pole R","x":647.27,"y":160.23,"controller":"FPP-40","mapX":647.27,"mapY":160.23},{"name":"Skull Wreath","x":945.27,"y":223.87,"controller":"FPP-40","mapX":945.27,"mapY":223.87},{"name":"Skull_Pixel_Stake-1","x":368.86,"y":465.51,"controller":"FPP-40","mapX":368.86,"mapY":465.51},{"name":"Skull_Pixel_Stake-2","x":455.64,"y":464.1,"controller":"FPP-40","mapX":455.64,"mapY":464.1},{"name":"Skull_Pixel_Stake-3","x":861.72,"y":468.5,"controller":"FPP-40","mapX":861.72,"mapY":468.5},{"name":"Skull_Pixel_Stake-4","x":956.69,"y":471.82,"controller":"FPP-40","mapX":956.69,"mapY":471.82},{"name":"Spider Left Peak","x":434.03,"y":112.72,"controller":"FPP-40","mapX":434.03,"mapY":112.72},{"name":"Spider RIght Peak","x":711.76,"y":112.44,"controller":"FPP-40","mapX":711.76,"mapY":112.44},{"name":"Witch with cauldron Non singing","x":90.5,"y":474.5,"controller":"FPP-40","mapX":90.5,"mapY":474.5},{"name":"Zombie1","x":593.4,"y":389.63,"controller":"FPP-40","mapX":593.4,"mapY":389.63},{"name":"Zombie2","x":745.49,"y":390.45,"controller":"FPP-40","mapX":745.49,"mapY":390.45},{"name":"Zombie3","x":676.9,"y":462.56,"controller":"FPP-40","mapX":676.9,"mapY":462.56},{"name":"Zombie4","x":541.52,"y":508.62,"controller":"FPP-40","mapX":541.52,"mapY":508.62},{"name":"Zombie5","x":785.28,"y":499.1,"controller":"FPP-40","mapX":785.28,"mapY":499.1},{"name":"retro cat","x":257.58,"y":507.62,"controller":"FPP-40","mapX":257.58,"mapY":507.62}];
@@ -1577,7 +1485,7 @@ function mapRender(){
   XLIGHTS_MAP_MODELS.forEach(m=>{
     const p=mapXY(m.mapX,m.mapY), info=mapInfoFor(m.name);    const b=document.createElement('button'); b.type='button'; b.className='mapHotspot';
     b.style.left=p.x+'%'; b.style.top=p.y+'%';
-    if(info){const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model); const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]); const s=info.__groupId?megaTreeStage():stage(id); const changed=!info.__groupId&&isConnectionChanged(id); b.classList.add(done?'complete':changed?'stage-changed':s>=1?'stage-installed':'stage-unstarted'); if(!done&&!changed&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');}
+    if(info){const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model); const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]); const s=info.__groupId?megaTreeStage():stage(id); b.classList.add(done?'complete':s>=1?'stage-installed':'stage-unstarted'); if(!done&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');}
     b.title=m.name; b.addEventListener('click',e=>{e.stopPropagation();openMapDetail(m,info);}); hs.appendChild(b);
   });
   applyMapTransform();
@@ -1596,43 +1504,14 @@ function openMapDetail(m,info){
   }  if(!info){body.innerHTML='<div class="detailTitle">'+esc(m.name)+'</div><div class="detailMeta">This xLights model is present on the layout, but it is not in the current tracker data.</div>';}
   else{
     const id=slug(info.controller.name+"-"+info.port.port+"-"+info.model), s=stage(id), done=Boolean(completedProps[id]);
-    const ch=chainFor(info), conn=connectionFor(info,id), changed=isConnectionChanged(id);
-    const chain=ch.isChained?ch.models.join(" → "):info.model;
-    const chainLabel=ch.isChained?"🔗 "+esc(conn.controller)+" • "+esc(conn.port)+" → "+esc(chain):"🔌 "+esc(conn.controller)+" • "+esc(conn.port);
-    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div><div class="detailMeta">Exact xLights layout position • '+esc(conn.controller)+(changed?' • <span class="connectionChanged">CONNECTION CHANGED</span>':'')+'</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(conn.controller)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(conn.port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc(info.controller.ip||"")+'</span></div><div class="detailBox"><b>'+ (ch.isChained?"Chain":"Connection") +'</b><span>'+chainLabel+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><button type="button" class="megaAction" style="margin-top:12px" data-edit-connection="'+esc(id)+'" onclick="editConnectionById(this.dataset.editConnection);return false;">✎ EDIT CONTROLLER CONNECTION</button><div class="small" style="margin-top:10px">Click a step above to update this prop.</div>';
+    const chain=info.port.models.length>1?info.port.models.join(" → "):info.model;
+    body.innerHTML='<div class="detailTitle">'+esc(info.model)+'</div><div class="detailMeta">Exact xLights layout position • '+esc(info.controller.name)+'</div><div class="detailGrid"><div class="detailBox"><b>Controller</b><span>'+esc(info.controller.name)+'</span></div><div class="detailBox"><b>Port</b><span>'+esc(info.port.port)+'</span></div><div class="detailBox"><b>IP</b><span>'+esc(info.controller.ip||"")+'</span></div><div class="detailBox"><b>Chain</b><span>'+esc(chain)+'</span></div></div><div class="detailSteps">'+['UNSTARTED','INSTALLED','WIRED'].map((x,j)=>'<button type="button" class="detailStep '+(done||s>j?'done ':'')+(!done&&s===j?'active ':'')+'" data-detail-id="'+esc(id)+'" data-detail-stage="'+j+'">'+x+'</button>').join("")+'<button type="button" class="detailStep '+(done?'done':'')+'" data-detail-complete="'+esc(id)+'" '+(s<2&&!done?'disabled':'')+'>'+(done?'✓ COMPLETE':'COMPLETE')+'</button></div><div class="small" style="margin-top:10px">Click a step above to update this prop.</div>';
   }
   modal.classList.add("open");
 }
 
 document.getElementById("mapClose").addEventListener("click",()=>document.getElementById("mapModal").classList.remove("open"));
 document.getElementById("mapModal").addEventListener("click",e=>{if(e.target.id==="mapModal")e.currentTarget.classList.remove("open")});
-document.getElementById("connectionClose").addEventListener("click",closeConnectionEditor);
-document.getElementById("connectionCancel").addEventListener("click",closeConnectionEditor);
-document.getElementById("connectionModal").addEventListener("click",e=>{if(e.target.id==="connectionModal")closeConnectionEditor()});
-document.getElementById("connectionSave").addEventListener("click",()=>{
-  if(!editingConnectionId)return;
-  const info=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===editingConnectionId);
-  if(!info){closeConnectionEditor();return;}
-  const next={controller:document.getElementById("editController").value,port:document.getElementById("editPort").value};
-  const base=originalConnection(info);
-  const existing=connectionOverrideFor(info,editingConnectionId);
-  const old=existing||base;
-  const changed=old.controller!==next.controller||old.port!==next.port;
-  const isOriginal=next.controller===base.controller&&next.port===base.port;
-  if(isOriginal){
-    delete connectionOverrides[editingConnectionId];
-    const clickedId=slug(info.controller.name+"-"+info.port.port+"-"+info.model);
-    delete connectionOverrides[clickedId];
-  } else {
-    connectionOverrides[editingConnectionId]=next;
-  }
-  if(changed)editingConnectionMembers.forEach(member=>delete completedProps[slug(member.controller.name+"-"+member.port.port+"-"+member.model)]);
-  const info2=info;
-  save();render();closeConnectionEditor();
-  const modelObj=XLIGHTS_MAP_MODELS.find(m=>m.name===info2.model);
-  if(modelObj)openMapDetail(modelObj,info2);
-  showToast(isOriginal?"✓ Connection restored":editingConnectionMembers.length>1?"🟣 Chain connection change saved":"🟣 Connection change saved");
-});
 function clampPan(){
   const v=document.getElementById('mapViewport'); if(!v)return;
   const vw=v.clientWidth, vh=v.clientHeight;
@@ -1682,8 +1561,6 @@ mv.addEventListener('click',e=>{
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
 mapRender();
-<script>
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
