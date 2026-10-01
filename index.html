@@ -1682,6 +1682,8 @@ mv.addEventListener('click',e=>{
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
 mapRender();
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
