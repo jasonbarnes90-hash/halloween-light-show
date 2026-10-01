@@ -69,7 +69,7 @@
         <div class="detailBox"><b>Controller</b><select id="editController" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
         <div class="detailBox"><b>Port</b><select id="editPort" style="width:100%;padding:9px;border-radius:9px;background:#1b2029;color:#fff;border:1px solid #343c49"></select></div>
       </div>
-      <div class="small" style="margin-top:12px">Saving a changed connection marks this prop purple until you mark it complete.</div>
+      <div class="small" style="margin-top:12px">Saving a changed connection marks this prop purple until you mark it complete. For chained props, the controller/port change applies to the entire chain.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
         <button type="button" class="megaAction" id="connectionCancel">CANCEL</button>
         <button type="button" class="megaAction complete" id="connectionSave">SAVE CONNECTION</button>
@@ -1359,12 +1359,31 @@ let filter="ALL", query="";
 function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps, __connectionOverrides:connectionOverrides}));}
 const EFFECTIVE_CONTROLLERS=controllers;
 function originalConnection(info){return {controller:info.controller.name,port:info.port.port};}
+function chainFor(info){
+  const models=info?.port?.models||[];
+  const index=models.indexOf(info?.model);
+  if(models.length>1 && index>0){
+    return {models,index,rootModel:models[0]};
+  }
+  return {models:models.length?models:[info?.model],index:Math.max(index,0),rootModel:info?.model};
+}
+function connectionKey(info){
+  const ch=chainFor(info);
+  return slug(info.controller.name+"-"+info.port.port+"-"+ch.rootModel);
+}
+function connectionOverrideFor(info,id){
+  const key=connectionKey(info);
+  return connectionOverrides[key]||connectionOverrides[id]||null;
+}
 function connectionFor(info,id){
-  const o=connectionOverrides[id];
+  const o=connectionOverrideFor(info,id);
   if(o && o.controller && o.port)return {controller:o.controller,port:o.port,changed:true};
   const base=originalConnection(info); return {...base,changed:false};
 }
-function isConnectionChanged(id){return Boolean(connectionOverrides[id]);}
+function isConnectionChanged(id){
+  const info=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===id);
+  return info?Boolean(connectionOverrideFor(info,id)):Boolean(connectionOverrides[id]);
+}
 function controllerPorts(controllerName){
   const c=EFFECTIVE_CONTROLLERS.find(x=>x.name===controllerName);
   if(!c)return [];
@@ -1373,21 +1392,24 @@ function controllerPorts(controllerName){
   if(/projector/i.test(controllerName))return ["Virtual Matrix Port 1"];
   return c.ports.map(p=>p.port);
 }
-let editingConnectionId=null;
+let editingConnectionId=null, editingConnectionMembers=[];
 function openConnectionEditor(info){
   if(!info || info.__groupId)return;
-  editingConnectionId=slug(info.controller.name+"-"+info.port.port+"-"+info.model);
+  const ch=chainFor(info);
+  editingConnectionId=slug(info.controller.name+"-"+info.port.port+"-"+ch.rootModel);
+  editingConnectionMembers=ch.models.map(model=>props.find(o=>o.controller===info.controller&&o.port===info.port&&o.model===model)).filter(Boolean);
+  if(!editingConnectionMembers.length)editingConnectionMembers=[info];
   const effective=connectionFor(info,editingConnectionId);
   const cm=document.getElementById("editController"), pm=document.getElementById("editPort"), nm=document.getElementById("connectionPropName");
   cm.innerHTML=EFFECTIVE_CONTROLLERS.map(c=>'<option value="'+esc(c.name)+'">'+esc(c.name)+'</option>').join("");
   cm.value=effective.controller;
-  function refreshPorts(){pm.innerHTML=controllerPorts(cm.value).map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join(""); if(!controllerPorts(cm.value).includes(effective.port))pm.value=controllerPorts(cm.value)[0]||""; else pm.value=effective.port;}
+  function refreshPorts(){const ports=controllerPorts(cm.value);pm.innerHTML=ports.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join(""); if(!ports.includes(effective.port))pm.value=ports[0]||""; else pm.value=effective.port;}
   cm.onchange=()=>refreshPorts();
   refreshPorts();
-  nm.textContent="Prop: "+info.model;
+  nm.textContent="Prop: "+info.model+(ch.models.length>1?" • Chain: "+ch.models.join(" → "):"");
   document.getElementById("connectionModal").classList.add("open");
 }
-function closeConnectionEditor(){editingConnectionId=null;document.getElementById("connectionModal").classList.remove("open");}
+function closeConnectionEditor(){editingConnectionId=null;editingConnectionMembers=[];document.getElementById("connectionModal").classList.remove("open");}
 function editConnectionById(id){
   const info=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===id);
   if(info)openConnectionEditor(info);
@@ -1583,16 +1605,23 @@ document.getElementById("connectionSave").addEventListener("click",()=>{
   if(!info){closeConnectionEditor();return;}
   const next={controller:document.getElementById("editController").value,port:document.getElementById("editPort").value};
   const base=originalConnection(info);
-  const old=connectionOverrides[editingConnectionId]||base;
+  const existing=connectionOverrideFor(info,editingConnectionId);
+  const old=existing||base;
   const changed=old.controller!==next.controller||old.port!==next.port;
   const isOriginal=next.controller===base.controller&&next.port===base.port;
-  if(isOriginal)delete connectionOverrides[editingConnectionId]; else connectionOverrides[editingConnectionId]=next;
-  if(changed)delete completedProps[editingConnectionId];
-  const info2=props.find(o=>slug(o.controller.name+"-"+o.port.port+"-"+o.model)===editingConnectionId);
+  if(isOriginal){
+    delete connectionOverrides[editingConnectionId];
+    const clickedId=slug(info.controller.name+"-"+info.port.port+"-"+info.model);
+    delete connectionOverrides[clickedId];
+  } else {
+    connectionOverrides[editingConnectionId]=next;
+  }
+  if(changed)editingConnectionMembers.forEach(member=>delete completedProps[slug(member.controller.name+"-"+member.port.port+"-"+member.model)]);
+  const info2=info;
   save();render();closeConnectionEditor();
-  const modelObj=info2?XLIGHTS_MAP_MODELS.find(m=>m.name===info2.model):null;
+  const modelObj=XLIGHTS_MAP_MODELS.find(m=>m.name===info2.model);
   if(modelObj)openMapDetail(modelObj,info2);
-  showToast(isOriginal?"✓ Connection restored":"🟣 Connection change saved");
+  showToast(isOriginal?"✓ Connection restored":editingConnectionMembers.length>1?"🟣 Chain connection change saved":"🟣 Connection change saved");
 });
 function clampPan(){
   const v=document.getElementById('mapViewport'); if(!v)return;
