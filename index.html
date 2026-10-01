@@ -1385,35 +1385,57 @@ function betaOriginal(info){
 }
 function betaEffective(info){return betaOverrides[betaKey(info)]||betaOriginal(info)}
 function betaTopology(){
-  const base=betaProps(),groups=new Map(),moved=new Set(Object.keys(betaOverrides));
+  // IMPORTANT: betaProps() is alphabetically sorted for the editor.
+  // Chain topology must NEVER use that sorted order. Use the original DATA
+  // controller/port/model order as the authoritative xLights chain order.
+  const base=betaControllers().flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({
+    controller:c,port:p,model:m,propId:betaSlug(m)
+  }))));
+  const byId=new Map(base.map(o=>[o.propId,o]));
+  const groups=new Map(),moved=new Set(Object.keys(betaOverrides));
   const gkey=(c,p)=>c+"\u0000"+p;
+
+  // Start with the exact original xLights order.
   base.forEach(o=>{
     if(moved.has(o.propId))return;
     const k=gkey(o.controller.name,o.port.port);
     if(!groups.has(k))groups.set(k,{controller:o.controller.name,port:o.port.port,items:[]});
     groups.get(k).items.push({...o,_controller:o.controller.name,_port:o.port.port});
   });
+
+  // Insert moved props into their selected new chain position.
   Object.entries(betaOverrides).forEach(([propId,ov])=>{
-    const info=base.find(o=>o.propId===propId);if(!info)return;
+    const info=byId.get(propId);
+    if(!info)return;
     const k=gkey(ov.controller,ov.port);
     if(!groups.has(k))groups.set(k,{controller:ov.controller,port:ov.port,items:[]});
     const group=groups.get(k);
     const item={...info,_controller:ov.controller,_port:ov.port,_override:true};
+
     if(ov.positionType==="before"&&ov.positionProp){
-      const ix=group.items.findIndex(x=>x.model===ov.positionProp);
+      const ix=group.items.findIndex(x=>x.propId===ov.positionProp);
       if(ix>=0){group.items.splice(ix,0,item);return;}
     }
     if(ov.positionType==="after"&&ov.positionProp){
-      const ix=group.items.findIndex(x=>x.model===ov.positionProp);
+      const ix=group.items.findIndex(x=>x.propId===ov.positionProp);
       if(ix>=0){group.items.splice(ix+1,0,item);return;}
     }
     if(ov.positionType==="end"){group.items.push(item);return;}
     group.items.unshift(item);
   });
-  const byId=new Map(),props=[];
-  for(const g of groups.values()){g.items.forEach((o,i)=>{o._index=i;byId.set(o.propId,o);props.push(o)})}
-  props.sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
-  return {groups:[...groups.values()],byId,props};
+
+  const result={groups:[...groups.values()],byId:new Map(),props:[]};
+  result.groups.forEach(g=>{
+    g.items.forEach((o,i)=>{
+      o._index=i;
+      result.byId.set(o.propId,o);
+      result.props.push(o);
+    });
+  });
+
+  // Keep result.props alphabetical for candidate lookup/editor support.
+  result.props.sort((a,b)=>a.model.localeCompare(b.model,undefined,{numeric:true,sensitivity:"base"}));
+  return result;
 }
 function betaCandidates(controller,port,id){
   const t=betaTopology();
@@ -1467,10 +1489,12 @@ function betaLoadPorts(){
   betaShow(info);
 }
 function betaShow(info){
-  const orig=betaOriginal(info),d=betaDisplayInfo(info),changed=Boolean(betaOverrides[betaKey(info)]),origChain=info.port.models.length>1?info.port.models.join(" → "):info.model;
-  document.getElementById("betaCurrent").innerHTML="<b>Original xLights connection:</b> "+esc(orig.controller)+" • "+esc(orig.port)+" → "+esc(origChain)+
+  const orig=betaOriginal(info),d=betaDisplayInfo(info),changed=Boolean(betaOverrides[betaKey(info)]);
+  document.getElementById("betaCurrent").innerHTML=
+    "<b>Original xLights connection:</b> "+esc(orig.controller)+" • "+esc(orig.port)+" → "+esc(betaOriginalChainFor(info).join(" → "))+
     "<br><span class=\"connectionChanged\">"+(changed?"🟣 ":"")+"Current tracker connection: "+esc(d._controller)+" • "+esc(d._port)+" → "+esc(betaDisplayChain(info))+"</span>";
-  document.getElementById("betaStatus").textContent=changed?"🟣 Saved override for this prop only.":"Editing this prop only. Controller, port, and chain position are independent.";
+  document.getElementById("betaStatus").textContent=
+    changed?"🟣 Saved override for this prop only.":"No controller/chain override saved for this prop. Original chain order comes directly from the xLights data.";
 }
 function betaSelectFromMap(id){
   const ps=document.getElementById("betaProp");if(!ps)return;
