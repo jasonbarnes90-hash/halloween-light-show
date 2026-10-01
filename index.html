@@ -1773,5 +1773,19 @@ mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientR
 const oldRender=render; render=function(){oldRender();mapRender();};
 mapRender();
 </script>
+<script>
+(function(){
+  if(!("serviceWorker" in navigator)) return;
+  let reloaded=false;
+  navigator.serviceWorker.register("./sw.js",{scope:"./"})
+    .then(reg=>reg.update())
+    .catch(()=>{});
+  navigator.serviceWorker.addEventListener("controllerchange",function(){
+    if(reloaded)return;
+    reloaded=true;
+    window.location.reload();
+  });
+})();
+</script>
 </body>
 </html>
