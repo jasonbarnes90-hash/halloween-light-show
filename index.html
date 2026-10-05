@@ -45,7 +45,7 @@
 <p>Your prop installation mission control.</p>
 <div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v46</span></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v47</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
 <section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222;position:relative;z-index:50">
@@ -1350,16 +1350,9 @@ const RECOVERY_SNAPSHOT={"savedAt":"2026-10-05T11:35:50.245Z","state":{"fpp-40-p
 const BETA_KEY="halloween-light-show-progress-v2";
 (function(){
   if(localStorage.getItem(RECOVERY_KEY)==="1")return;
-  let existing={};
-  try{existing=JSON.parse(localStorage.getItem(BETA_KEY)||"{}")||{};}catch(_){}
-  const st=existing.state||existing||{};
-  const cp=existing.__completedProps||{};
-  const recorded=Object.keys(st).filter(k=>k&&k!=="__showTestingComplete"&&k!=="__completedProps").length;
-  const completed=Object.keys(cp).length;
-  const hasSubstantialProgress=recorded>=50||completed>=20||Object.values(st).some(v=>Number(v)>=2);
-  if(!hasSubstantialProgress){
-    localStorage.setItem(BETA_KEY,JSON.stringify(RECOVERY_SNAPSHOT));
-  }
+  // One-time recovery from the user's verified October 5 backup.
+  // This runs only once, then normal local progress is preserved.
+  localStorage.setItem(BETA_KEY,JSON.stringify(RECOVERY_SNAPSHOT));
   localStorage.setItem(RECOVERY_KEY,"1");
 })();
 let betaSaved=JSON.parse(localStorage.getItem(BETA_KEY)||"{}");
@@ -1804,7 +1797,7 @@ mapRender();
       if(p&&p.catch)p.catch(()=>{});
     }catch(_){}
   }
-  navigator.serviceWorker.register("./sw.js?v=46g",{scope:"./",updateViaCache:"none"})
+  navigator.serviceWorker.register("./sw.js?v=47g",{scope:"./",updateViaCache:"none"})
     .then(reg=>{
       checkForUpdate(reg);
       window.addEventListener("focus",()=>checkForUpdate(reg));
