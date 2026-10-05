@@ -45,7 +45,7 @@
 <p>Your prop installation mission control.</p>
 <div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v50</span></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v51</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
 <section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222;position:relative;z-index:50">
@@ -1556,12 +1556,18 @@ const controllers=DATA.controllers.filter(c=>!/wled/i.test(c.name));
 const props=controllers.flatMap(c=>c.ports.flatMap(p=>p.models.map(m=>({controller:c,port:p,model:m}))));
 let saved=JSON.parse(localStorage.getItem(key)||"{}");
 // Carry forward the old app's per-prop progress. Old TESTED (3) becomes WIRED (2).
+// If the browser has no usable progress, use the verified embedded October 5 recovery snapshot.
 let state=saved.state||saved||{};
+if(!state || !Object.keys(state).some(k=>k!=="__showTestingComplete"&&k!=="__showTestingComplete")) state={...RECOVERY_SNAPSHOT.state};
 if(state && state.__showTestingComplete!==undefined){ /* v2 */ }
-let testingComplete=Boolean(saved.__showTestingComplete);
-let completedProps=saved.__completedProps||{};
+let testingComplete=Boolean(saved.__showTestingComplete ?? RECOVERY_SNAPSHOT.__showTestingComplete);
+let completedProps=saved.__completedProps||RECOVERY_SNAPSHOT.__completedProps||{};
 delete state.__showTestingComplete;
 delete state.__completedProps;
+if(!saved.state || !Object.keys(saved.state||{}).length){
+  saved={state, __showTestingComplete:testingComplete, __completedProps:completedProps, __connectionOverrides:saved.__connectionOverrides||{}};
+  try{localStorage.setItem(key,JSON.stringify(saved));}catch(_){}
+}
 let filter="ALL", query="";
 function save(){localStorage.setItem(key,JSON.stringify({state, __showTestingComplete:testingComplete, __completedProps:completedProps, __connectionOverrides:betaOverrides||{}}));}
 function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display="none",1800)}\ndocument.getElementById("refreshApp")?.addEventListener("click",()=>{\n  location.href="./hard-reset.html?refresh="+Date.now();\n});\nfunction stage(id){return Math.min(Number(state[id]||0),2)}
@@ -1792,6 +1798,8 @@ mv.addEventListener('click',e=>{
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
 try{mapRender()}catch(_){requestAnimationFrame(()=>{try{mapRender()}catch(_){}})}
+window.addEventListener("load",()=>{try{mapRender()}catch(_){}});
+window.addEventListener("pageshow",()=>{try{mapRender()}catch(_){} });
 </script>
 <script>
 (function(){
@@ -1803,7 +1811,7 @@ try{mapRender()}catch(_){requestAnimationFrame(()=>{try{mapRender()}catch(_){}})
       if(p&&p.catch)p.catch(()=>{});
     }catch(_){}
   }
-  navigator.serviceWorker.register("./sw.js?v=50a",{scope:"./",updateViaCache:"none"})
+  navigator.serviceWorker.register("./sw.js?v=51a",{scope:"./",updateViaCache:"none"})
     .then(reg=>{
       checkForUpdate(reg);
       window.addEventListener("focus",()=>checkForUpdate(reg));
