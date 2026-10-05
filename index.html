@@ -22,8 +22,8 @@
 .mapViewport.dragging{cursor:grabbing}
 .mapStage{position:relative;width:100%;aspect-ratio:1500/700;transform-origin:0 0;will-change:transform}
 .mapImage{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
-#mapHotspots{position:absolute;inset:0;pointer-events:none}
-.mapHotspot{pointer-events:auto;position:absolute;width:14px;height:14px;border:1.5px solid #ff4d4d;border-radius:50%;background:#ff4d4d55;transform:translate(-50%,-50%);cursor:pointer;z-index:3;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66;padding:0}
+#mapHotspots{position:absolute;inset:0;pointer-events:none;z-index:5}
+.mapHotspot{pointer-events:auto;display:block;position:absolute;width:14px;height:14px;border:1.5px solid #ff4d4d;border-radius:50%;background:#ff4d4d55;transform:translate(-50%,-50%);cursor:pointer;z-index:3;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66;padding:0}
 .mapHotspot.stage-unstarted{border-color:#ff4d4d;background:#ff4d4d55;box-shadow:0 0 0 1px #0008,0 0 8px #ff4d4d66}.mapHotspot.stage-installed,.mapHotspot.stage-wired{border-color:#ff8a00;background:#ff8a004d;box-shadow:0 0 0 1px #0008,0 0 8px #ff8a0066}.mapHotspot.complete{border-color:#35d07f;background:#35d07f55;box-shadow:0 0 0 1px #0008,0 0 10px #35d07f88}.mapHotspot:hover,.mapHotspot.selected{filter:brightness(1.18);z-index:5}
 .mapLegend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;color:#aeb7c6;font-size:11px;border-top:1px solid #303744}.mapLegend span{display:flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#ff4d4d}.dot.unstarted{background:#ff4d4d}.dot.installed{background:#ff8a00}.dot.done{background:#35d07f}
 .mapHint{padding:0 14px 12px;color:#7f8a9c;font-size:11px}
@@ -45,7 +45,7 @@
 <p>Your prop installation mission control.</p>
 <div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v48</span></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v49</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
 <section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222;position:relative;z-index:50">
@@ -1345,7 +1345,7 @@ const DATA={
 };
 
 // ----- Controller / Chain Editor -----
-const RECOVERY_KEY="halloween-light-show-recovery-2026-10-05-v1";
+const RECOVERY_KEY="halloween-light-show-recovery-2026-10-05-v2";
 const RECOVERY_SNAPSHOT={"savedAt":"2026-10-05T11:35:50.245Z","state":{"fpp-40-pixel-port-14-spider-left-peak":1,"fpp-40-pixel-port-13-gothic-gargoyle":1,"fpp-40-pixel-port-15-spider-right-peak":1,"fpp-projector-virtual-matrix-port-1-projector":1,"fpp-40-pixel-port-5-ge-web-corner-left":1,"fpp-40-pixel-port-6-ghost-rbl-1":1,"fpp-40-pixel-port-6-ghost-rbl-2":2,"fpp-40-pixel-port-9-ghost-rbl-3":2,"fpp-40-pixel-port-9-ghost-rbl-4":1,"fpp-40-pixel-port-10-ge-web-corner-right":1,"fpp-40-pixel-port-11-pirate-skull-left":1,"fpp-40-pixel-port-11-candy-corn":1,"fpp-40-pixel-port-33-skull-wreath":1,"fpp-40-pixel-port-33-pirate-skull-right":1,"fpp-40-pixel-port-33-candy-corn-2":1,"fpp-32-pixel-port-1-mega-tree-str-1":2,"fpp-32-pixel-port-2-mega-tree-str-2":2,"fpp-32-pixel-port-3-mega-tree-str-3":2,"fpp-32-pixel-port-4-mega-tree-str-4":2,"fpp-32-pixel-port-5-mega-tree-str-5":2,"fpp-32-pixel-port-6-mega-tree-str-6":2,"fpp-32-pixel-port-7-mega-tree-str-7":2,"fpp-32-pixel-port-8-mega-tree-str-8":2,"fpp-32-pixel-port-9-mega-tree-str-9":2,"fpp-32-pixel-port-10-mega-tree-str-10":2,"fpp-32-pixel-port-11-mega-tree-str-11":2,"fpp-32-pixel-port-12-mega-tree-str-12":2,"fpp-32-pixel-port-13-mega-tree-str-13":2,"fpp-32-pixel-port-14-mega-tree-str-14":2,"fpp-32-pixel-port-15-mega-tree-str-15":2,"fpp-32-pixel-port-16-mega-tree-str-16":2,"fpp-32-pixel-port-17-mega-tree-str-17":2,"fpp-32-pixel-port-18-mega-tree-str-18":2,"fpp-32-pixel-port-19-mega-tree-str-19":2,"fpp-32-pixel-port-20-mega-tree-str-20":2,"fpp-32-pixel-port-21-mega-tree-str-21":2,"fpp-32-pixel-port-22-mega-tree-str-22":2,"fpp-32-pixel-port-23-mega-tree-str-23":2,"fpp-32-pixel-port-24-mega-tree-str-24":2,"fpp-32-pixel-port-25-boscoyo-black-widow-spider-2":2,"fpp-40-pixel-port-17-witch-with-cauldron-non-singing":1,"fpp-40-pixel-port-29-boscoyo-megastone-rip":1,"fpp-40-pixel-port-29-boscoyo-chromastone-2":1,"fpp-40-pixel-port-29-boscoyo-chromastone-4":2,"fpp-40-pixel-port-29-boscoyo-chromastone-3":2,"fpp-40-pixel-port-30-ge-grim-reaper-2019":1,"fpp-40-pixel-port-28-zombie1":1,"fpp-40-pixel-port-28-zombie2":2,"fpp-40-pixel-port-28-zombie4":2,"fpp-40-pixel-port-28-zombie5":2,"fpp-40-pixel-port-28-zombie3":2,"fpp-40-pixel-port-31-arches-left":2,"fpp-40-pixel-port-31-arches-left-middle":1,"fpp-40-pixel-port-30-arches-right-middle":1,"fpp-40-pixel-port-30-arches-right":2,"fpp-40-pixel-port-30-skull-pixel-stake-4":2,"fpp-40-pixel-port-30-skull-pixel-stake-3":1,"fpp-40-pixel-port-31-skull-pixel-stake-2":2,"fpp-40-pixel-port-31-skull-pixel-stake-1":1,"fpp-40-pixel-port-18-retro-cat":1,"fpp-40-pixel-port-16-boscoyo-chromabat-left":1,"fpp-40-pixel-port-16-boscoyo-chromaghost":2,"fpp-40-pixel-port-16-boscoyo-chromabat-right":2,"fpp-40-pixel-port-32-skull-1":1,"fpp-40-pixel-port-32-skull-2":1,"fpp-40-pixel-port-32-skull-3":1,"fpp-40-pixel-port-2-matrix-right-window":1},"__showTestingComplete":false,"__completedProps":{"fpp-40-pixel-port-6-ghost-rbl-2":true,"fpp-40-pixel-port-9-ghost-rbl-3":true,"fpp-40-pixel-port-29-boscoyo-chromastone-4":true,"fpp-40-pixel-port-29-boscoyo-chromastone-3":true,"fpp-40-pixel-port-28-zombie2":true,"fpp-40-pixel-port-28-zombie4":true,"fpp-40-pixel-port-28-zombie5":true,"fpp-40-pixel-port-28-zombie3":true,"fpp-40-pixel-port-31-arches-left":true,"fpp-40-pixel-port-30-skull-pixel-stake-4":true,"fpp-40-pixel-port-30-arches-right":true,"fpp-40-pixel-port-31-skull-pixel-stake-2":true,"fpp-40-pixel-port-16-boscoyo-chromaghost":true,"fpp-40-pixel-port-16-boscoyo-chromabat-right":true,"fpp-32-pixel-port-1-mega-tree-str-1":true,"fpp-32-pixel-port-2-mega-tree-str-2":true,"fpp-32-pixel-port-3-mega-tree-str-3":true,"fpp-32-pixel-port-4-mega-tree-str-4":true,"fpp-32-pixel-port-5-mega-tree-str-5":true,"fpp-32-pixel-port-6-mega-tree-str-6":true,"fpp-32-pixel-port-7-mega-tree-str-7":true,"fpp-32-pixel-port-8-mega-tree-str-8":true,"fpp-32-pixel-port-9-mega-tree-str-9":true,"fpp-32-pixel-port-10-mega-tree-str-10":true,"fpp-32-pixel-port-11-mega-tree-str-11":true,"fpp-32-pixel-port-12-mega-tree-str-12":true,"fpp-32-pixel-port-13-mega-tree-str-13":true,"fpp-32-pixel-port-14-mega-tree-str-14":true,"fpp-32-pixel-port-15-mega-tree-str-15":true,"fpp-32-pixel-port-16-mega-tree-str-16":true,"fpp-32-pixel-port-17-mega-tree-str-17":true,"fpp-32-pixel-port-18-mega-tree-str-18":true,"fpp-32-pixel-port-19-mega-tree-str-19":true,"fpp-32-pixel-port-20-mega-tree-str-20":true,"fpp-32-pixel-port-21-mega-tree-str-21":true,"fpp-32-pixel-port-22-mega-tree-str-22":true,"fpp-32-pixel-port-23-mega-tree-str-23":true,"fpp-32-pixel-port-24-mega-tree-str-24":true,"fpp-32-pixel-port-25-boscoyo-black-widow-spider-2":true},"__connectionOverrides":{}};
 const BETA_KEY="halloween-light-show-progress-v2";
 (function(){
@@ -1784,7 +1784,7 @@ mv.addEventListener('click',e=>{
 });
 mv.addEventListener('wheel',e=>{e.preventDefault();const r=mv.getBoundingClientRect();setZoom(mapZoom+(e.deltaY<0?.2:-.2),e.clientX-r.left,e.clientY-r.top);},{passive:false});
 const oldRender=render; render=function(){oldRender();mapRender();};
-mapRender();
+try{mapRender()}catch(_){requestAnimationFrame(()=>{try{mapRender()}catch(_){}})}
 </script>
 <script>
 (function(){
@@ -1796,7 +1796,7 @@ mapRender();
       if(p&&p.catch)p.catch(()=>{});
     }catch(_){}
   }
-  navigator.serviceWorker.register("./sw.js?v=48g",{scope:"./",updateViaCache:"none"})
+  navigator.serviceWorker.register("./sw.js?v=49g",{scope:"./",updateViaCache:"none"})
     .then(reg=>{
       checkForUpdate(reg);
       window.addEventListener("focus",()=>checkForUpdate(reg));
