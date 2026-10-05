@@ -1,4 +1,4 @@
-const CACHE="halloween-light-show-v53a";
+const CACHE="halloween-light-show-v54a";
 const ASSETS=["./","./index.html","./manifest.webmanifest"];
 
 self.addEventListener("install",event=>{
