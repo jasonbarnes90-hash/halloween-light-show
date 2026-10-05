@@ -45,7 +45,7 @@
 <p>Your prop installation mission control.</p>
 <div class="progressRow"><div><div class="small">SHOW READINESS</div><div class="pct" id="pct">0%</div></div><div style="text-align:right"><div id="readyBig" style="font-weight:900">0 SHOW READY</div><div class="small" id="totalBig"></div></div></div>
 <div class="bar"><div class="fill" id="fill"></div></div>
-<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v51</span></div>
+<div class="stats"><span class="stat" id="installedStat">🏠 0 installed</span><span class="stat" id="wiredStat">🔌 0 wired</span><span class="stat" id="testedStat">⚡ Testing not complete</span><span class="stat" id="remainingStat">👻 0 remaining</span><span class="stat" id="appVersion">⚙️ App v52</span></div>
 </section>
 <div class="tabs" id="tabs"></div>
 <section id="betaEditor" style="margin:12px 0 18px;padding:14px;border:1px solid #b566ff55;border-radius:18px;background:#171222;position:relative;z-index:50">
@@ -1711,18 +1711,30 @@ function applyMapTransform(){
 function mapRender(){
   const hs=document.getElementById('mapHotspots');if(!hs)return;
   hs.innerHTML='';
-  XLIGHTS_MAP_MODELS.forEach(m=>{
-    const p=mapXY(m.mapX,m.mapY),info=mapInfoFor(m.name),b=document.createElement('button');
-    b.type='button';b.className='mapHotspot';b.style.left=p.x+'%';b.style.top=p.y+'%';
-    if(info){
-      const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model);
-      const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]);
-      const s=info.__groupId?megaTreeStage():stage(id);
-      const changed=!info.__groupId&&Boolean(betaOverrides[betaKey(info)]);
-      b.classList.add(done?'complete':changed?'stage-changed':s>=1?'stage-installed':'stage-unstarted');
-      if(!done&&!changed&&s>=2)b.classList.remove('stage-installed'),b.classList.add('stage-wired');
-    }
-    b.title=m.name;b.addEventListener('click',e=>{e.stopPropagation();openMapDetail(m,info)});hs.appendChild(b);
+  const models=Array.isArray(XLIGHTS_MAP_MODELS)?XLIGHTS_MAP_MODELS:[];
+  models.forEach(m=>{
+    try{
+      const p=mapXY(Number(m.mapX)||0,Number(m.mapY)||0);
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='mapHotspot stage-unstarted';
+      b.style.cssText='position:absolute;display:block!important;visibility:visible!important;opacity:1!important;left:'+p.x+'%;top:'+p.y+'%;width:14px;height:14px;padding:0;border-radius:50%;z-index:10;';
+      b.title=m.name||'Show prop';
+      let info=null;
+      try{info=mapInfoFor(m.name)}catch(_){}
+      try{
+        if(info){
+          const id=info.__groupId||slug(info.controller.name+'-'+info.port.port+'-'+info.model);
+          const done=info.__groupId?megaTreeDone():Boolean(completedProps[id]);
+          const s=info.__groupId?megaTreeStage():stage(id);
+          const changed=!info.__groupId&&Boolean(betaOverrides[betaKey(info)]);
+          b.classList.remove('stage-unstarted');
+          b.classList.add(done?'complete':changed?'stage-changed':s>=2?'stage-wired':s>=1?'stage-installed':'stage-unstarted');
+        }
+      }catch(_){}
+      b.addEventListener('click',e=>{e.stopPropagation();try{openMapDetail(m,info)}catch(_){}});
+      hs.appendChild(b);
+    }catch(_){}
   });
   applyMapTransform();
 }
@@ -1811,7 +1823,7 @@ window.addEventListener("pageshow",()=>{try{mapRender()}catch(_){} });
       if(p&&p.catch)p.catch(()=>{});
     }catch(_){}
   }
-  navigator.serviceWorker.register("./sw.js?v=51a",{scope:"./",updateViaCache:"none"})
+  navigator.serviceWorker.register("./sw.js?v=52a",{scope:"./",updateViaCache:"none"})
     .then(reg=>{
       checkForUpdate(reg);
       window.addEventListener("focus",()=>checkForUpdate(reg));
