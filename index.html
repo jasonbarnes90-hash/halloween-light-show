@@ -1559,7 +1559,12 @@ function render(){
  const app=document.getElementById("app");
  let total=props.length,installed=0,wired=0,completed=0;
  props.forEach(({controller:c,port:p,model:m})=>{const id=slug(c.name+"-"+p.port+"-"+m),s=stage(id);if(s>=1)installed++;if(s>=2)wired++;if(completedProps[id])completed++});
- let pct=total?Math.round((completed/total)*100):0;
+ let progressPoints=0;
+ props.forEach(({controller:c,port:p,model:m})=>{
+   const id=slug(c.name+"-"+p.port+"-"+m),s=stage(id);
+   progressPoints+=completedProps[id]?100:(s>=2?67:(s>=1?33:0));
+ });
+ let pct=total?Math.round(progressPoints/total):0;
  document.getElementById("pct").textContent=pct+"%";document.getElementById("fill").style.width=pct+"%";
  document.getElementById("readyBig").textContent=testingComplete?"🎉 SHOW READY":"SHOW SETUP";document.getElementById("totalBig").textContent="of "+total+" props";
  document.getElementById("installedStat").textContent="🏠 "+installed+" installed";document.getElementById("wiredStat").textContent="🔌 "+wired+" wired";
