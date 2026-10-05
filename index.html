@@ -1782,8 +1782,20 @@ mapRender();
 (function(){
   if(!("serviceWorker" in navigator)) return;
   let reloaded=false;
-  navigator.serviceWorker.register("./sw.js",{scope:"./"})
-    .then(reg=>reg.update())
+  function checkForUpdate(reg){
+    try{
+      const p=reg.update();
+      if(p&&p.catch)p.catch(()=>{});
+    }catch(_){}
+  }
+  navigator.serviceWorker.register("./sw.js?v=45g",{scope:"./",updateViaCache:"none"})
+    .then(reg=>{
+      checkForUpdate(reg);
+      window.addEventListener("focus",()=>checkForUpdate(reg));
+      document.addEventListener("visibilitychange",()=>{
+        if(document.visibilityState==="visible") checkForUpdate(reg);
+      });
+    })
     .catch(()=>{});
   navigator.serviceWorker.addEventListener("controllerchange",function(){
     if(reloaded)return;
